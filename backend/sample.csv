@@ -1,0 +1,11 @@
+question,optionA,optionB,optionC,optionD,correctAnswer
+What is the capital of France?,Berlin,Paris,Madrid,Rome,B
+Which language is primarily used for web development?,Python,Java,JavaScript,C++,C
+What does HTML stand for?,HyperText Machine Language,HyperText Markup Language,HighText Markup Language,HyperTool Markup Language,B
+Which of the following is a NoSQL database?,MySQL,PostgreSQL,MongoDB,Oracle,C
+What does CSS stand for?,Computer Style Sheets,Creative Style Sheets,Cascading Style Sheets,Colorful Style Sheets,C
+What is 2 + 2 * 3?,10,12,8,9,C
+Which HTTP method is used to retrieve data?,POST,PUT,DELETE,GET,D
+What is the output of console.log(typeof null)?,null,undefined,object,number,C
+Which hook is used for side effects in React?,useState,useEffect,useReducer,useContext,B
+What symbol is used for comments in Python?,//,/* */,#,--,C
