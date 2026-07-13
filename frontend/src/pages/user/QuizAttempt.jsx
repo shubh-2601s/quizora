@@ -4,6 +4,7 @@ import api from '../../api/axios';
 import Timer from '../../components/Timer';
 import ProgressBar from '../../components/ProgressBar';
 import toast from 'react-hot-toast';
+import { TargetIcon, AlertCircleIcon, ArrowLeftIcon, ArrowRightIcon, CheckCircleIcon } from '../../components/Icons';
 
 const OPTIONS = ['A', 'B', 'C', 'D'];
 
@@ -64,7 +65,7 @@ const QuizAttempt = () => {
         answers: answersArray,
         timeTaken,
       });
-      toast.success('Quiz submitted!');
+      toast.success('Quiz submitted successfully!');
       navigate(`/result/${data.submissionId}`);
     } catch (err) {
       toast.error(err.response?.data?.message || 'Submission failed');
@@ -88,8 +89,11 @@ const QuizAttempt = () => {
     <div className="quiz-attempt-wrapper">
       {/* Tab switch warning */}
       {tabWarning && (
-        <div className="tab-warning-banner">
-          <span>⚠️ Warning #{tabWarnCount}: Please stay on this tab during the quiz!</span>
+        <div className="tab-warning-banner inline-icon gap-icon">
+          <div className="inline-icon gap-icon">
+            <AlertCircleIcon size={18} />
+            <span>Warning #{tabWarnCount}: Please stay on this tab during the quiz!</span>
+          </div>
           <button
             style={{ background: 'rgba(255,255,255,0.2)', border: 'none', color: '#fff', padding: '4px 12px', borderRadius: 6, cursor: 'pointer', fontWeight: 600 }}
             onClick={() => setTabWarning(false)}
@@ -101,8 +105,9 @@ const QuizAttempt = () => {
 
       {/* Top bar */}
       <div className="quiz-topbar" style={{ marginTop: tabWarning ? 48 : 0 }}>
-        <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--text-primary)' }}>
-          🎯 {quiz.title}
+        <div className="inline-icon gap-icon" style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--text-primary)' }}>
+          <TargetIcon size={18} style={{ color: 'var(--primary)' }} />
+          <span>{quiz.title}</span>
         </div>
         <Timer durationSeconds={quiz.duration * 60} onExpire={submitQuiz} />
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -110,13 +115,14 @@ const QuizAttempt = () => {
             {answeredCount}/{questions.length} answered
           </span>
           <button
-            className="btn btn-success"
+            className="btn btn-success inline-icon gap-icon"
             onClick={() => {
               if (window.confirm('Submit quiz? You cannot undo this.')) submitQuiz();
             }}
             disabled={submitting}
           >
-            {submitting ? 'Submitting...' : 'Submit Quiz'}
+            <CheckCircleIcon size={16} />
+            <span>{submitting ? 'Submitting...' : 'Submit Quiz'}</span>
           </button>
         </div>
       </div>
@@ -168,19 +174,22 @@ const QuizAttempt = () => {
         {/* Navigation */}
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
           <button
-            className="btn btn-outline"
+            className="btn btn-outline inline-icon gap-icon"
             onClick={() => setCurrentIdx((i) => Math.max(0, i - 1))}
             disabled={currentIdx === 0}
           >
-            ← Previous
+            <ArrowLeftIcon size={16} />
+            <span>Previous</span>
           </button>
           {currentIdx < questions.length - 1 ? (
-            <button className="btn btn-primary" onClick={() => setCurrentIdx((i) => i + 1)}>
-              Next →
+            <button className="btn btn-primary inline-icon gap-icon" onClick={() => setCurrentIdx((i) => i + 1)}>
+              <span>Next</span>
+              <ArrowRightIcon size={16} />
             </button>
           ) : (
-            <button className="btn btn-success" onClick={() => { if (window.confirm('Submit quiz?')) submitQuiz(); }} disabled={submitting}>
-              {submitting ? 'Submitting...' : '✅ Submit'}
+            <button className="btn btn-success inline-icon gap-icon" onClick={() => { if (window.confirm('Submit quiz?')) submitQuiz(); }} disabled={submitting}>
+              <CheckCircleIcon size={16} />
+              <span>{submitting ? 'Submitting...' : 'Submit'}</span>
             </button>
           )}
         </div>

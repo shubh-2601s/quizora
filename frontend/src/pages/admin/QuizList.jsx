@@ -4,6 +4,7 @@ import api from '../../api/axios';
 import Navbar from '../../components/Navbar';
 import QuizCard from '../../components/QuizCard';
 import toast from 'react-hot-toast';
+import { FileTextIcon, PlusIcon, HelpCircleIcon } from '../../components/Icons';
 
 const QuizList = () => {
   const [quizzes, setQuizzes] = useState([]);
@@ -42,16 +43,22 @@ const QuizList = () => {
         <div className="container">
           <div className="flex-between" style={{ marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
             <div>
-              <h1 className="page-title">📋 My Quizzes</h1>
+              <h1 className="page-title inline-icon gap-icon">
+                <FileTextIcon size={24} style={{ color: 'var(--primary)' }} />
+                <span>My Quizzes</span>
+              </h1>
               <p className="page-subtitle">{quizzes.length} quiz{quizzes.length !== 1 ? 'zes' : ''} created</p>
             </div>
-            <Link to="/admin/create-quiz" className="btn btn-primary">➕ Create Quiz</Link>
+            <Link to="/admin/create-quiz" className="btn btn-primary inline-icon gap-icon">
+              <PlusIcon size={16} />
+              <span>Create Quiz</span>
+            </Link>
           </div>
 
           <div className="card" style={{ marginBottom: 20 }}>
             <input
               className="input"
-              placeholder="🔍 Search by title or quiz code..."
+              placeholder="Search by title or quiz code..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -61,7 +68,9 @@ const QuizList = () => {
             <div className="loading-wrapper"><div className="spinner" /></div>
           ) : filtered.length === 0 ? (
             <div className="empty-state">
-              <div className="empty-icon">{search ? '🔍' : '📋'}</div>
+              <div className="empty-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {search ? <HelpCircleIcon size={48} style={{ color: 'var(--text-muted)' }} /> : <FileTextIcon size={48} style={{ color: 'var(--text-muted)' }} />}
+              </div>
               <p style={{ fontWeight: 600, marginBottom: 8 }}>{search ? 'No quizzes match your search' : 'No quizzes yet'}</p>
               {!search && <Link to="/admin/create-quiz" className="btn btn-primary">Create your first quiz</Link>}
             </div>

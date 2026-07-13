@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../api/axios';
 import Navbar from '../../components/Navbar';
+import { UserIcon, ArrowLeftIcon, EditIcon, PlusIcon, UploadCloudIcon, FileTextIcon, TrendingUpIcon, CheckCircleIcon, ArrowRightIcon, XCircleIcon, UsersIcon, CrownIcon, TrashIcon } from '../../components/Icons';
 
 // ─── Shared helpers ──────────────────────────────────────────────────────────
 const initialForm = { email: '', password: '', name: '', role: 'user' };
@@ -68,11 +69,11 @@ const ManageUsers = () => {
     setCreateMsg(null);
     try {
       const res = await api.post('/users/create', form);
-      setCreateMsg({ type: 'success', text: `✅ User "${res.data.user.email}" created successfully!` });
+      setCreateMsg({ type: 'success', text: `User "${res.data.user.email}" created successfully!` });
       setForm(initialForm);
       fetchUsers(1, search);
     } catch (err) {
-      setCreateMsg({ type: 'error', text: `❌ ${err.response?.data?.message || 'Failed to create user.'}` });
+      setCreateMsg({ type: 'error', text: `${err.response?.data?.message || 'Failed to create user.'}` });
     } finally {
       setCreateLoading(false);
     }
@@ -99,12 +100,12 @@ const ManageUsers = () => {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setUploadResult(res.data);
-      setUploadMsg({ type: 'success', text: `✅ Upload complete: ${res.data.added} added, ${res.data.skipped} skipped, ${res.data.errors.length} errors.` });
+      setUploadMsg({ type: 'success', text: `Upload complete: ${res.data.added} added, ${res.data.skipped} skipped, ${res.data.errors.length} errors.` });
       setFile(null);
       if (fileInputRef.current) fileInputRef.current.value = '';
       fetchUsers(1, search);
     } catch (err) {
-      setUploadMsg({ type: 'error', text: `❌ ${err.response?.data?.message || 'Upload failed.'}` });
+      setUploadMsg({ type: 'error', text: `${err.response?.data?.message || 'Upload failed.'}` });
     } finally {
       setUploadLoading(false);
     }
@@ -143,11 +144,15 @@ const ManageUsers = () => {
             position: 'relative', overflow: 'hidden',
           }}>
             <div style={{ position: 'absolute', top: -20, right: -20, width: 160, height: 160, background: 'rgba(255,255,255,0.07)', borderRadius: '50%' }} />
-            <h1 style={{ fontSize: '1.7rem', fontWeight: 800, marginBottom: 6 }}>👤 Manage Users</h1>
+            <h1 className="page-title inline-icon gap-icon" style={{ color: '#fff' }}>
+              <UserIcon size={28} />
+              <span>Manage Users</span>
+            </h1>
             <p style={{ opacity: 0.85 }}>Create user accounts manually or import from a CSV / Excel file.</p>
             <div style={{ marginTop: 16 }}>
-              <Link to="/admin" className="btn" style={{ background: 'rgba(255,255,255,0.2)', color: '#fff', border: '1px solid rgba(255,255,255,0.3)' }}>
-                ← Back to Dashboard
+              <Link to="/admin" className="btn inline-icon gap-icon" style={{ background: 'rgba(255,255,255,0.2)', color: '#fff', border: '1px solid rgba(255,255,255,0.3)' }}>
+                <ArrowLeftIcon size={16} />
+                <span>Back to Dashboard</span>
               </Link>
             </div>
           </div>
@@ -158,8 +163,11 @@ const ManageUsers = () => {
             {/* ── Manual Create ── */}
             <div className="card">
               <h2 style={{ fontWeight: 700, fontSize: '1.05rem', marginBottom: 18, display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ background: '#EDE9FF', color: 'var(--primary)', borderRadius: 8, padding: '4px 10px', fontSize: '0.85rem' }}>✏️ Manual</span>
-                Create Single User
+                <span className="inline-icon gap-icon" style={{ background: '#EDE9FF', color: 'var(--primary)', borderRadius: 8, padding: '4px 10px', fontSize: '0.85rem' }}>
+                  <EditIcon size={12} />
+                  <span>Manual</span>
+                </span>
+                <span>Create Single User</span>
               </h2>
 
               {createMsg && (
@@ -195,8 +203,9 @@ const ManageUsers = () => {
                     <option value="admin">Admin</option>
                   </select>
                 </div>
-                <button className="btn btn-primary" type="submit" disabled={createLoading} style={{ marginTop: 4 }}>
-                  {createLoading ? 'Creating...' : '➕ Create User'}
+                <button className="btn btn-primary inline-icon gap-icon" type="submit" disabled={createLoading} style={{ marginTop: 4 }}>
+                  <PlusIcon size={16} />
+                  <span>{createLoading ? 'Creating...' : 'Create User'}</span>
                 </button>
               </form>
             </div>
@@ -204,8 +213,11 @@ const ManageUsers = () => {
             {/* ── Bulk Upload ── */}
             <div className="card">
               <h2 style={{ fontWeight: 700, fontSize: '1.05rem', marginBottom: 18, display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ background: '#D1FAE5', color: '#065F46', borderRadius: 8, padding: '4px 10px', fontSize: '0.85rem' }}>📤 Bulk</span>
-                Import from File
+                <span className="inline-icon gap-icon" style={{ background: '#D1FAE5', color: '#065F46', borderRadius: 8, padding: '4px 10px', fontSize: '0.85rem' }}>
+                  <UploadCloudIcon size={12} />
+                  <span>Bulk</span>
+                </span>
+                <span>Import from File</span>
               </h2>
 
               {uploadMsg && (
@@ -223,7 +235,9 @@ const ManageUsers = () => {
                   background: file ? '#EDE9FF40' : '#FAFAFA', transition: 'all 0.2s', marginBottom: 14,
                 }}
               >
-                <div style={{ fontSize: 36, marginBottom: 8 }}>{file ? '📄' : '☁️'}</div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
+                  {file ? <FileTextIcon size={36} style={{ color: 'var(--primary)' }} /> : <UploadCloudIcon size={36} style={{ color: 'var(--text-muted)' }} />}
+                </div>
                 {file ? (
                   <p style={{ fontWeight: 600, color: 'var(--primary)', fontSize: '0.9rem' }}>{file.name}</p>
                 ) : (
@@ -238,11 +252,13 @@ const ManageUsers = () => {
 
               {file && (
                 <div style={{ display: 'flex', gap: 8 }}>
-                  <button className="btn btn-primary" onClick={handleUpload} disabled={uploadLoading} style={{ flex: 1 }}>
-                    {uploadLoading ? 'Uploading...' : '🚀 Upload & Import'}
+                  <button className="btn btn-primary inline-icon gap-icon" onClick={handleUpload} disabled={uploadLoading} style={{ flex: 1 }}>
+                    <UploadCloudIcon size={16} />
+                    <span>{uploadLoading ? 'Uploading...' : 'Upload & Import'}</span>
                   </button>
-                  <button className="btn btn-secondary" onClick={() => { setFile(null); if (fileInputRef.current) fileInputRef.current.value = ''; }} style={{ whiteSpace: 'nowrap' }}>
-                    ✕ Clear
+                  <button className="btn btn-secondary inline-icon gap-icon" onClick={() => { setFile(null); if (fileInputRef.current) fileInputRef.current.value = ''; }} style={{ whiteSpace: 'nowrap' }}>
+                    <XCircleIcon size={16} />
+                    <span>Clear</span>
                   </button>
                 </div>
               )}
@@ -250,13 +266,23 @@ const ManageUsers = () => {
               {/* Upload Result Summary */}
               {uploadResult && (
                 <div style={{ marginTop: 16, border: '1px solid #E5E1FF', borderRadius: 10, overflow: 'hidden' }}>
-                  <div style={{ background: '#EDE9FF', padding: '10px 14px', fontWeight: 700, fontSize: '0.85rem', color: 'var(--primary)' }}>
-                    📊 Upload Summary — {uploadResult.totalRows} rows processed
+                  <div className="inline-icon gap-icon" style={{ background: '#EDE9FF', padding: '10px 14px', fontWeight: 700, fontSize: '0.85rem', color: 'var(--primary)', width: '100%', boxSizing: 'border-box' }}>
+                    <TrendingUpIcon size={16} />
+                    <span>Upload Summary — {uploadResult.totalRows} rows processed</span>
                   </div>
                   <div style={{ padding: '12px 14px', display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-                    <span className="badge badge-success">✅ {uploadResult.added} Added</span>
-                    <span className="badge badge-warning">⏭️ {uploadResult.skipped} Skipped</span>
-                    <span className="badge badge-error">❌ {uploadResult.errors.length} Errors</span>
+                    <span className="badge badge-success inline-icon gap-icon">
+                      <CheckCircleIcon size={12} />
+                      <span>{uploadResult.added} Added</span>
+                    </span>
+                    <span className="badge badge-warning inline-icon gap-icon">
+                      <ArrowRightIcon size={12} />
+                      <span>{uploadResult.skipped} Skipped</span>
+                    </span>
+                    <span className="badge badge-error inline-icon gap-icon">
+                      <XCircleIcon size={12} />
+                      <span>{uploadResult.errors.length} Errors</span>
+                    </span>
                   </div>
                   {uploadResult.errors.length > 0 && (
                     <div style={{ padding: '0 14px 12px', maxHeight: 120, overflowY: 'auto' }}>
@@ -292,7 +318,9 @@ const ManageUsers = () => {
               <div className="loading-wrapper"><div className="spinner" /></div>
             ) : users.length === 0 ? (
               <div className="empty-state" style={{ padding: 32 }}>
-                <div className="empty-icon">👥</div>
+                <div className="empty-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <UsersIcon size={48} style={{ color: 'var(--text-muted)' }} />
+                </div>
                 <p>{search ? 'No users match your search.' : 'No users yet. Create one above!'}</p>
               </div>
             ) : (
@@ -315,8 +343,9 @@ const ManageUsers = () => {
                         <td style={{ fontWeight: 600 }}>{u.name}</td>
                         <td style={{ fontFamily: 'monospace', fontSize: '0.88rem' }}>{u.email}</td>
                         <td>
-                          <span className={`badge ${u.role === 'admin' ? 'badge-primary' : 'badge-warning'}`}>
-                            {u.role === 'admin' ? '👑 Admin' : '👤 User'}
+                          <span className={`badge ${u.role === 'admin' ? 'badge-primary' : 'badge-warning'} inline-icon gap-icon`}>
+                            {u.role === 'admin' ? <CrownIcon size={12} /> : <UserIcon size={12} />}
+                            <span>{u.role === 'admin' ? 'Admin' : 'User'}</span>
                           </span>
                         </td>
                         <td style={{ fontSize: '0.82rem', opacity: 0.7 }}>
@@ -324,12 +353,12 @@ const ManageUsers = () => {
                         </td>
                         <td>
                           <button
-                            className="btn btn-sm"
-                            style={{ background: '#FEE2E2', color: '#EF4444', fontWeight: 600 }}
+                            className="btn btn-sm btn-danger inline-icon gap-icon"
                             onClick={() => handleDelete(u._id)}
                             disabled={deleteId === u._id}
                           >
-                            {deleteId === u._id ? '...' : '🗑️ Delete'}
+                            <TrashIcon size={14} />
+                            <span>{deleteId === u._id ? '...' : 'Delete'}</span>
                           </button>
                         </td>
                       </tr>
@@ -342,11 +371,17 @@ const ManageUsers = () => {
             {/* Pagination */}
             {pages > 1 && (
               <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginTop: 20 }}>
-                <button className="btn btn-secondary btn-sm" onClick={() => fetchUsers(page - 1, search)} disabled={page <= 1}>← Prev</button>
+                <button className="btn btn-secondary btn-sm inline-icon gap-icon" onClick={() => fetchUsers(page - 1, search)} disabled={page <= 1}>
+                  <ArrowLeftIcon size={14} />
+                  <span>Prev</span>
+                </button>
                 <span style={{ padding: '6px 14px', fontWeight: 600, fontSize: '0.88rem', opacity: 0.7 }}>
                   Page {page} of {pages}
                 </span>
-                <button className="btn btn-secondary btn-sm" onClick={() => fetchUsers(page + 1, search)} disabled={page >= pages}>Next →</button>
+                <button className="btn btn-secondary btn-sm inline-icon gap-icon" onClick={() => fetchUsers(page + 1, search)} disabled={page >= pages}>
+                  <span>Next</span>
+                  <ArrowRightIcon size={14} />
+                </button>
               </div>
             )}
           </div>

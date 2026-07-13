@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { ClockIcon } from './Icons';
 
 const Timer = ({ durationSeconds, onExpire }) => {
   const [seconds, setSeconds] = useState(durationSeconds);
@@ -32,8 +33,8 @@ const Timer = ({ durationSeconds, onExpire }) => {
   const isUrgent = seconds <= 60;
 
   return (
-    <div className={`timer-display ${isUrgent ? 'urgent' : ''}`}>
-      <span>⏱</span>
+    <div className={`timer-display ${isUrgent ? 'urgent' : ''} inline-icon gap-icon`}>
+      <ClockIcon size={16} />
       <span>{display}</span>
     </div>
   );

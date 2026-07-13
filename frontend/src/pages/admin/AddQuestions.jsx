@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../api/axios';
 import Navbar from '../../components/Navbar';
 import toast from 'react-hot-toast';
+import { EditIcon, CheckCircleIcon, FileSpreadsheetIcon, PlusIcon, UploadCloudIcon, FileTextIcon, HelpCircleIcon, TrashIcon } from '../../components/Icons';
 
 const EMPTY_Q = { question: '', optionA: '', optionB: '', optionC: '', optionD: '', correctAnswer: 'A' };
 
@@ -79,11 +80,15 @@ const AddQuestions = () => {
         <div className="container">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
             <div>
-              <h1 className="page-title">📝 Add Questions</h1>
+              <h1 className="page-title inline-icon gap-icon">
+                <EditIcon size={24} style={{ color: 'var(--primary)' }} />
+                <span>Add Questions</span>
+              </h1>
               <p className="page-subtitle">{quiz?.title} — {questions.length} question(s) added</p>
             </div>
-            <button className="btn btn-primary" onClick={() => navigate(`/admin/quiz/${quizId}`)}>
-              ✅ Done — View Quiz
+            <button className="btn btn-primary inline-icon gap-icon" onClick={() => navigate(`/admin/quiz/${quizId}`)}>
+              <CheckCircleIcon size={16} />
+              <span>Done — View Quiz</span>
             </button>
           </div>
 
@@ -91,8 +96,14 @@ const AddQuestions = () => {
             {/* Left: Add forms */}
             <div>
               <div className="tabs" style={{ marginBottom: 16 }}>
-                <button className={`tab-btn ${activeTab === 'manual' ? 'active' : ''}`} onClick={() => setActiveTab('manual')}>✏️ Manual</button>
-                <button className={`tab-btn ${activeTab === 'csv' ? 'active' : ''}`} onClick={() => setActiveTab('csv')}>📂 CSV Upload</button>
+                <button className={`tab-btn ${activeTab === 'manual' ? 'active' : ''} inline-icon gap-icon`} onClick={() => setActiveTab('manual')}>
+                  <EditIcon size={14} />
+                  <span>Manual</span>
+                </button>
+                <button className={`tab-btn ${activeTab === 'csv' ? 'active' : ''} inline-icon gap-icon`} onClick={() => setActiveTab('csv')}>
+                  <FileSpreadsheetIcon size={14} />
+                  <span>CSV Upload</span>
+                </button>
               </div>
 
               {activeTab === 'manual' && (
@@ -117,8 +128,9 @@ const AddQuestions = () => {
                       {['A', 'B', 'C', 'D'].map((o) => <option key={o} value={o}>Option {o}</option>)}
                     </select>
                   </div>
-                  <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
-                    {loading ? 'Adding...' : '➕ Add Question'}
+                  <button type="submit" className="btn btn-primary btn-full inline-icon gap-icon" disabled={loading}>
+                    <PlusIcon size={16} />
+                    <span>{loading ? 'Adding...' : 'Add Question'}</span>
                   </button>
                 </form>
               )}
@@ -132,15 +144,25 @@ const AddQuestions = () => {
                     onDragLeave={() => setDragOver(false)}
                     onDrop={(e) => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files[0]; if (f) setCsvFile(f); }}
                   >
-                    <div className="file-drop-icon">📂</div>
+                    <div className="file-drop-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
+                      <UploadCloudIcon size={36} style={{ color: 'var(--primary)' }} />
+                    </div>
                     <p style={{ fontWeight: 600, marginBottom: 4 }}>Drop CSV file here or click to browse</p>
                     <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Maximum file size: 5MB</p>
-                    {csvFile && <p style={{ marginTop: 8, color: 'var(--primary)', fontWeight: 600 }}>📄 {csvFile.name}</p>}
+                    {csvFile && (
+                      <p className="inline-icon gap-icon" style={{ marginTop: 8, color: 'var(--primary)', fontWeight: 600 }}>
+                        <FileTextIcon size={16} />
+                        <span>{csvFile.name}</span>
+                      </p>
+                    )}
                     <input ref={fileRef} type="file" accept=".csv" style={{ display: 'none' }} onChange={(e) => setCsvFile(e.target.files[0])} />
                   </div>
 
                   <div style={{ background: 'var(--bg)', borderRadius: 'var(--radius-md)', padding: '12px 16px' }}>
-                    <p style={{ fontWeight: 600, fontSize: '0.8rem', marginBottom: 6 }}>📋 CSV Format:</p>
+                    <p className="inline-icon gap-icon" style={{ fontWeight: 600, fontSize: '0.8rem', marginBottom: 6 }}>
+                      <FileTextIcon size={14} />
+                      <span>CSV Format:</span>
+                    </p>
                     <code style={{ fontSize: '0.75rem', color: 'var(--primary)' }}>
                       question,optionA,optionB,optionC,optionD,correctAnswer
                     </code>
@@ -149,8 +171,9 @@ const AddQuestions = () => {
                     </p>
                   </div>
 
-                  <button className="btn btn-primary btn-full" onClick={handleCsvUpload} disabled={csvUploading || !csvFile}>
-                    {csvUploading ? 'Uploading...' : '⬆️ Upload CSV'}
+                  <button className="btn btn-primary btn-full inline-icon gap-icon" onClick={handleCsvUpload} disabled={csvUploading || !csvFile}>
+                    <UploadCloudIcon size={16} />
+                    <span>{csvUploading ? 'Uploading...' : 'Upload CSV'}</span>
                   </button>
                 </div>
               )}
@@ -163,7 +186,9 @@ const AddQuestions = () => {
               </h2>
               {questions.length === 0 ? (
                 <div className="card empty-state">
-                  <div className="empty-icon">❓</div>
+                  <div className="empty-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <HelpCircleIcon size={48} style={{ color: 'var(--text-muted)' }} />
+                  </div>
                   <p>No questions yet. Add some!</p>
                 </div>
               ) : (
@@ -174,11 +199,14 @@ const AddQuestions = () => {
                         <div style={{ flex: 1 }}>
                           <span className="badge badge-primary" style={{ marginBottom: 6 }}>Q{i + 1}</span>
                           <p style={{ fontSize: '0.875rem', fontWeight: 600 }}>{q.question}</p>
-                          <p style={{ fontSize: '0.78rem', color: 'var(--success)', marginTop: 4 }}>
-                            ✅ Correct: {q.correctAnswer} — {q[`option${q.correctAnswer}`]}
+                          <p className="inline-icon gap-icon" style={{ fontSize: '0.78rem', color: 'var(--success)', marginTop: 4 }}>
+                            <CheckCircleIcon size={14} />
+                            <span>Correct: {q.correctAnswer} — {q[`option${q.correctAnswer}`]}</span>
                           </p>
                         </div>
-                        <button className="btn btn-danger btn-icon btn-sm" onClick={() => handleDelete(q._id)} title="Delete question">🗑</button>
+                        <button className="btn btn-danger btn-icon btn-sm inline-icon" onClick={() => handleDelete(q._id)} title="Delete question">
+                          <TrashIcon size={14} />
+                        </button>
                       </div>
                     </div>
                   ))}

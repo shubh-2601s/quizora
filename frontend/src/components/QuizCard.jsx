@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { ClockIcon, HelpCircleIcon, UsersIcon, CalendarIcon } from './Icons';
 
 const QuizCard = ({ quiz, isAdmin = false, onDelete }) => {
   const now = new Date();
@@ -27,11 +28,27 @@ const QuizCard = ({ quiz, isAdmin = false, onDelete }) => {
         <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>{quiz.description}</p>
       )}
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-        <span>⏱ {quiz.duration} min</span>
-        {quiz.questionCount !== undefined && <span>❓ {quiz.questionCount} questions</span>}
-        {quiz.submissionCount !== undefined && <span>👥 {quiz.submissionCount} attempts</span>}
-        <span>📅 {start.toLocaleDateString()}</span>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+        <span className="inline-icon gap-icon">
+          <ClockIcon size={14} />
+          {quiz.duration} min
+        </span>
+        {quiz.questionCount !== undefined && (
+          <span className="inline-icon gap-icon">
+            <HelpCircleIcon size={14} />
+            {quiz.questionCount} questions
+          </span>
+        )}
+        {quiz.submissionCount !== undefined && (
+          <span className="inline-icon gap-icon">
+            <UsersIcon size={14} />
+            {quiz.submissionCount} attempts
+          </span>
+        )}
+        <span className="inline-icon gap-icon">
+          <CalendarIcon size={14} />
+          {start.toLocaleDateString()}
+        </span>
       </div>
 
       <div style={{ display: 'flex', gap: 8, marginTop: 'auto', paddingTop: 8, borderTop: '1px solid var(--border)' }}>

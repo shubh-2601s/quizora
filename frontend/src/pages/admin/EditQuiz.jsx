@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../api/axios';
 import Navbar from '../../components/Navbar';
 import toast from 'react-hot-toast';
+import { EditIcon, SaveIcon } from '../../components/Icons';
 
 const EditQuiz = () => {
   const { quizId } = useParams();
@@ -57,7 +58,10 @@ const EditQuiz = () => {
       <div className="page-wrapper">
         <div className="container" style={{ maxWidth: 720 }}>
           <div className="page-header">
-            <h1 className="page-title">✏️ Edit Quiz</h1>
+            <h1 className="page-title inline-icon gap-icon">
+              <EditIcon size={24} style={{ color: 'var(--primary)' }} />
+              <span>Edit Quiz</span>
+            </h1>
             <p className="page-subtitle">Update quiz details. The quiz code cannot be changed.</p>
           </div>
 
@@ -86,8 +90,8 @@ const EditQuiz = () => {
             </div>
             <div style={{ background: 'var(--bg)', borderRadius: 'var(--radius-md)', padding: '16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
               {[
-                { name: 'randomizeQuestions', label: '🔀 Randomize question order' },
-                { name: 'allowReattempt', label: '🔁 Allow re-attempts' },
+                { name: 'randomizeQuestions', label: 'Randomize question order' },
+                { name: 'allowReattempt', label: 'Allow re-attempts' },
               ].map((opt) => (
                 <label key={opt.name} style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer' }}>
                   <input type="checkbox" name={opt.name} checked={form[opt.name]} onChange={handleChange}
@@ -98,8 +102,9 @@ const EditQuiz = () => {
             </div>
             <div style={{ display: 'flex', gap: 12, paddingTop: 8, borderTop: '1px solid var(--border)' }}>
               <button type="button" className="btn btn-outline" onClick={() => navigate(`/admin/quiz/${quizId}`)}>Cancel</button>
-              <button type="submit" className="btn btn-primary" style={{ flex: 1 }} disabled={saving}>
-                {saving ? 'Saving...' : '💾 Save Changes'}
+              <button type="submit" className="btn btn-primary inline-icon gap-icon" style={{ flex: 1 }} disabled={saving}>
+                <SaveIcon size={16} />
+                <span>{saving ? 'Saving...' : 'Save Changes'}</span>
               </button>
             </div>
           </form>

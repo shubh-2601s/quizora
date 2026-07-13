@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../../api/axios';
 import Navbar from '../../components/Navbar';
 import toast from 'react-hot-toast';
+import { PlusIcon, ArrowRightIcon } from '../../components/Icons';
 
 const CreateQuiz = () => {
   const navigate = useNavigate();
@@ -41,7 +42,10 @@ const CreateQuiz = () => {
       <div className="page-wrapper">
         <div className="container" style={{ maxWidth: 720 }}>
           <div className="page-header">
-            <h1 className="page-title">➕ Create New Quiz</h1>
+            <h1 className="page-title inline-icon gap-icon">
+              <PlusIcon size={24} style={{ color: 'var(--primary)' }} />
+              <span>Create New Quiz</span>
+            </h1>
             <p className="page-subtitle">Fill in the details to create a quiz. A unique code will be generated automatically.</p>
           </div>
 
@@ -78,8 +82,8 @@ const CreateQuiz = () => {
             <div style={{ background: 'var(--bg)', borderRadius: 'var(--radius-md)', padding: '16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
               <p style={{ fontWeight: 600, fontSize: '0.875rem', color: 'var(--text-primary)', marginBottom: 4 }}>Quiz Options</p>
               {[
-                { name: 'randomizeQuestions', label: '🔀 Randomize question order', desc: 'Questions appear in random order for each user' },
-                { name: 'allowReattempt', label: '🔁 Allow re-attempts', desc: 'Users can attempt this quiz more than once' },
+                { name: 'randomizeQuestions', label: 'Randomize question order', desc: 'Questions appear in random order for each user' },
+                { name: 'allowReattempt', label: 'Allow re-attempts', desc: 'Users can attempt this quiz more than once' },
               ].map((opt) => (
                 <label key={opt.name} style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer' }}>
                   <input type="checkbox" name={opt.name} checked={form[opt.name]} onChange={handleChange}
@@ -94,8 +98,9 @@ const CreateQuiz = () => {
 
             <div style={{ display: 'flex', gap: 12, paddingTop: 8, borderTop: '1px solid var(--border)' }}>
               <button type="button" className="btn btn-outline" onClick={() => navigate('/admin/quizzes')}>Cancel</button>
-              <button type="submit" className="btn btn-primary" style={{ flex: 1 }} disabled={loading}>
-                {loading ? 'Creating...' : '🚀 Create Quiz & Add Questions'}
+              <button type="submit" className="btn btn-primary inline-icon gap-icon" style={{ flex: 1 }} disabled={loading}>
+                <span>{loading ? 'Creating...' : 'Create Quiz & Add Questions'}</span>
+                {!loading && <ArrowRightIcon size={16} />}
               </button>
             </div>
           </form>

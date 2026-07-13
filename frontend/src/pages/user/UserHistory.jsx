@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../api/axios';
 import Navbar from '../../components/Navbar';
+import { HistoryIcon, InboxIcon } from '../../components/Icons';
 
 const UserHistory = () => {
   const [submissions, setSubmissions] = useState([]);
@@ -20,7 +21,10 @@ const UserHistory = () => {
       <div className="page-wrapper">
         <div className="container">
           <div className="page-header">
-            <h1 className="page-title">📜 My Quiz History</h1>
+            <h1 className="page-title inline-icon gap-icon">
+              <HistoryIcon size={24} style={{ color: 'var(--primary)' }} />
+              <span>My Quiz History</span>
+            </h1>
             <p className="page-subtitle">All your quiz attempts and scores</p>
           </div>
 
@@ -28,7 +32,9 @@ const UserHistory = () => {
             <div className="loading-wrapper"><div className="spinner" /></div>
           ) : submissions.length === 0 ? (
             <div className="empty-state">
-              <div className="empty-icon">📭</div>
+              <div className="empty-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <InboxIcon size={48} style={{ color: 'var(--text-muted)' }} />
+              </div>
               <p style={{ fontWeight: 600, marginBottom: 8 }}>No attempts yet</p>
               <p style={{ fontSize: '0.875rem' }}>Enter a quiz code from your dashboard to get started!</p>
               <Link to="/dashboard" className="btn btn-primary" style={{ marginTop: 16 }}>Go to Dashboard</Link>

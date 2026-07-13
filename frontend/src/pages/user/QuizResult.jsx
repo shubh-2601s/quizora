@@ -4,6 +4,7 @@ import api from '../../api/axios';
 import Navbar from '../../components/Navbar';
 import Leaderboard from '../../components/Leaderboard';
 import { useAuth } from '../../context/AuthContext';
+import { CheckCircleIcon, XCircleIcon, FileTextIcon, TrophyIcon, ArrowLeftIcon, HistoryIcon } from '../../components/Icons';
 
 const OPTIONS = ['A', 'B', 'C', 'D'];
 
@@ -56,7 +57,7 @@ const QuizResult = () => {
               </div>
             </div>
             <h1 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: 4 }}>
-              {passed ? '🎉 Great Job!' : '😔 Keep Practicing!'}
+              {passed ? 'Great Job!' : 'Keep Practicing!'}
             </h1>
             <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>
               {quiz.title}
@@ -77,19 +78,22 @@ const QuizResult = () => {
                 <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Time Taken</p>
               </div>
             </div>
-            <span className={`badge ${passed ? 'badge-success' : 'badge-error'}`} style={{ fontSize: '0.9rem', padding: '6px 16px' }}>
-              {passed ? '✅ Passed' : '❌ Failed'}
+            <span className={`badge ${passed ? 'badge-success' : 'badge-error'} inline-icon gap-icon`} style={{ fontSize: '0.9rem', padding: '6px 16px' }}>
+              {passed ? <CheckCircleIcon size={16} /> : <XCircleIcon size={16} />}
+              <span>{passed ? 'Passed' : 'Failed'}</span>
             </span>
           </div>
 
           {/* Tabs */}
           <div style={{ marginBottom: 20 }}>
             <div className="tabs">
-              <button className={`tab-btn ${activeTab === 'review' ? 'active' : ''}`} onClick={() => setActiveTab('review')}>
-                📋 Answer Review
+              <button className={`tab-btn ${activeTab === 'review' ? 'active' : ''} inline-icon gap-icon`} onClick={() => setActiveTab('review')}>
+                <FileTextIcon size={16} />
+                <span>Answer Review</span>
               </button>
-              <button className={`tab-btn ${activeTab === 'leaderboard' ? 'active' : ''}`} onClick={() => setActiveTab('leaderboard')}>
-                🏆 Leaderboard
+              <button className={`tab-btn ${activeTab === 'leaderboard' ? 'active' : ''} inline-icon gap-icon`} onClick={() => setActiveTab('leaderboard')}>
+                <TrophyIcon size={16} />
+                <span>Leaderboard</span>
               </button>
             </div>
           </div>
@@ -103,8 +107,9 @@ const QuizResult = () => {
                   <div key={i} className="card">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                       <span className="badge badge-primary">Q{i + 1}</span>
-                      <span className={`badge ${ans.isCorrect ? 'badge-success' : 'badge-error'}`}>
-                        {ans.isCorrect ? '✅ Correct' : '❌ Wrong'}
+                      <span className={`badge ${ans.isCorrect ? 'badge-success' : 'badge-error'} inline-icon gap-icon`}>
+                        {ans.isCorrect ? <CheckCircleIcon size={12} /> : <XCircleIcon size={12} />}
+                        <span>{ans.isCorrect ? 'Correct' : 'Wrong'}</span>
                       </span>
                     </div>
                     <p style={{ fontWeight: 600, marginBottom: 14, fontSize: '0.95rem' }}>{q.question}</p>
@@ -119,8 +124,13 @@ const QuizResult = () => {
                           <div key={opt} className={cls} style={{ cursor: 'default' }}>
                             <span className="option-label">{opt}</span>
                             <span>{q[`option${opt}`]}</span>
-                            {isSelected && !isCorrect && <span style={{ marginLeft: 'auto', flexShrink: 0 }}>← Your answer</span>}
-                            {isCorrect && <span style={{ marginLeft: 'auto', flexShrink: 0 }}>✅ Correct</span>}
+                            {isSelected && !isCorrect && <span style={{ marginLeft: 'auto', flexShrink: 0, fontSize: '0.8rem', opacity: 0.8 }}>← Your answer</span>}
+                            {isCorrect && (
+                              <span className="inline-icon gap-icon" style={{ marginLeft: 'auto', flexShrink: 0, fontSize: '0.8rem', fontWeight: 600 }}>
+                                <CheckCircleIcon size={14} />
+                                <span>Correct</span>
+                              </span>
+                            )}
                           </div>
                         );
                       })}
@@ -133,14 +143,23 @@ const QuizResult = () => {
 
           {activeTab === 'leaderboard' && (
             <div className="card">
-              <h2 style={{ fontWeight: 700, marginBottom: 16 }}>🏆 Quiz Leaderboard</h2>
+              <h2 style={{ fontWeight: 700, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <TrophyIcon size={20} style={{ color: 'var(--warning)' }} />
+                <span>Quiz Leaderboard</span>
+              </h2>
               <Leaderboard data={leaderboard} currentUserId={user?._id} />
             </div>
           )}
 
           <div style={{ display: 'flex', gap: 12, marginTop: 24 }}>
-            <Link to="/dashboard" className="btn btn-outline">← Back to Dashboard</Link>
-            <Link to="/history" className="btn btn-secondary">📜 My History</Link>
+            <Link to="/dashboard" className="btn btn-outline inline-icon gap-icon">
+              <ArrowLeftIcon size={16} />
+              <span>Back to Dashboard</span>
+            </Link>
+            <Link to="/history" className="btn btn-secondary inline-icon gap-icon">
+              <HistoryIcon size={16} />
+              <span>My History</span>
+            </Link>
           </div>
         </div>
       </div>

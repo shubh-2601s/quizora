@@ -1,8 +1,12 @@
+import { TrophyIcon } from './Icons';
+
 const Leaderboard = ({ data, currentUserId }) => {
   if (!data || data.length === 0) {
     return (
       <div className="empty-state">
-        <div className="empty-icon">🏆</div>
+        <div className="empty-icon">
+          <TrophyIcon size={48} style={{ color: 'var(--text-muted)' }} />
+        </div>
         <p>No submissions yet. Be the first!</p>
       </div>
     );
@@ -13,13 +17,6 @@ const Leaderboard = ({ data, currentUserId }) => {
     if (rank === 2) return 'rank-badge rank-2';
     if (rank === 3) return 'rank-badge rank-3';
     return 'rank-badge rank-other';
-  };
-
-  const getRankIcon = (rank) => {
-    if (rank === 1) return '🥇';
-    if (rank === 2) return '🥈';
-    if (rank === 3) return '🥉';
-    return rank;
   };
 
   return (
@@ -34,7 +31,7 @@ const Leaderboard = ({ data, currentUserId }) => {
             borderRadius: 'var(--radius-md)',
           }}
         >
-          <div className={getRankClass(entry.rank)}>{getRankIcon(entry.rank)}</div>
+          <div className={getRankClass(entry.rank)}>{entry.rank}</div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <p style={{ fontWeight: 700, fontSize: '0.925rem', color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {entry.name}

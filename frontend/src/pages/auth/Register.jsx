@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api/axios';
 import toast from 'react-hot-toast';
+import { TargetIcon, ArrowRightIcon } from '../../components/Icons';
 
 const Register = () => {
   const { login } = useAuth();
@@ -28,7 +29,7 @@ const Register = () => {
         name: form.name, email: form.email, password: form.password, role: form.role,
       });
       login(data.user, data.token);
-      toast.success(`Account created! Welcome, ${data.user.name}! 🎉`);
+      toast.success(`Account created! Welcome, ${data.user.name}!`);
       navigate(data.user.role === 'admin' ? '/admin' : '/dashboard');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Registration failed');
@@ -41,7 +42,9 @@ const Register = () => {
     <div className="auth-wrapper">
       <div className="auth-card">
         <div className="auth-logo">
-          <div className="auth-logo-icon">🎯</div>
+          <div className="auth-logo-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <TargetIcon size={24} />
+          </div>
           <span style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)' }}>QuizApp</span>
         </div>
         <h1 className="auth-title">Create account</h1>
@@ -61,8 +64,8 @@ const Register = () => {
           <div className="form-group">
             <label className="label">I want to</label>
             <select className="select" name="role" value={form.role} onChange={handleChange}>
-              <option value="user">👤 Take Quizzes (User)</option>
-              <option value="admin">👑 Create Quizzes (Admin)</option>
+              <option value="user">Take Quizzes (User)</option>
+              <option value="admin">Create Quizzes (Admin)</option>
             </select>
           </div>
           <div className="form-grid">
@@ -77,8 +80,9 @@ const Register = () => {
                 value={form.confirmPassword} onChange={handleChange} required />
             </div>
           </div>
-          <button className="btn btn-primary btn-full btn-lg" type="submit" disabled={loading} style={{ marginTop: 8 }}>
-            {loading ? 'Creating account...' : 'Create Account →'}
+          <button className="btn btn-primary btn-full btn-lg inline-icon gap-icon" type="submit" disabled={loading} style={{ marginTop: 8 }}>
+            <span>{loading ? 'Creating account...' : 'Create Account'}</span>
+            {!loading && <ArrowRightIcon size={16} />}
           </button>
         </form>
 

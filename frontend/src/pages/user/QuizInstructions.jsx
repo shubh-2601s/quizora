@@ -1,5 +1,6 @@
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
+import { HelpCircleIcon, ClockIcon, TargetIcon, FileTextIcon, ArrowLeftIcon, ArrowRightIcon } from '../../components/Icons';
 
 const QuizInstructions = () => {
   const { code } = useParams();
@@ -27,6 +28,12 @@ const QuizInstructions = () => {
     quiz.allowReattempt ? 'You may attempt this quiz multiple times.' : 'You can only attempt this quiz once.',
   ];
 
+  const stats = [
+    { icon: <HelpCircleIcon size={24} style={{ color: 'var(--primary)' }} />, label: 'Questions', value: questionCount },
+    { icon: <ClockIcon size={24} style={{ color: 'var(--accent)' }} />, label: 'Duration', value: `${quiz.duration} min` },
+    { icon: <TargetIcon size={24} style={{ color: 'var(--warning)' }} />, label: 'Marks', value: `${questionCount} pts` },
+  ];
+
   return (
     <>
       <Navbar />
@@ -45,13 +52,9 @@ const QuizInstructions = () => {
 
           {/* Stats */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 20 }}>
-            {[
-              { icon: '❓', label: 'Questions', value: questionCount },
-              { icon: '⏱', label: 'Duration', value: `${quiz.duration} min` },
-              { icon: '🎯', label: 'Marks', value: `${questionCount} pts` },
-            ].map((s) => (
-              <div key={s.label} className="card" style={{ textAlign: 'center', padding: '16px' }}>
-                <div style={{ fontSize: '1.5rem', marginBottom: 4 }}>{s.icon}</div>
+            {stats.map((s, idx) => (
+              <div key={idx} className="card" style={{ textAlign: 'center', padding: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                <div style={{ marginBottom: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{s.icon}</div>
                 <p style={{ fontWeight: 800, fontSize: '1.1rem' }}>{s.value}</p>
                 <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{s.label}</p>
               </div>
@@ -60,8 +63,9 @@ const QuizInstructions = () => {
 
           {/* Instructions */}
           <div className="card" style={{ marginBottom: 24 }}>
-            <h2 style={{ fontWeight: 700, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
-              📋 Instructions
+            <h2 style={{ fontWeight: 700, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-primary)' }}>
+              <FileTextIcon size={20} style={{ color: 'var(--primary)' }} />
+              <span>Instructions</span>
             </h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {instructions.map((inst, i) => (
@@ -74,13 +78,17 @@ const QuizInstructions = () => {
           </div>
 
           <div style={{ display: 'flex', gap: 12 }}>
-            <button className="btn btn-outline" onClick={() => navigate('/dashboard')}>← Back</button>
+            <button className="btn btn-outline inline-icon gap-icon" onClick={() => navigate('/dashboard')}>
+              <ArrowLeftIcon size={16} />
+              <span>Back</span>
+            </button>
             <button
-              className="btn btn-primary btn-lg"
+              className="btn btn-primary btn-lg inline-icon gap-icon"
               style={{ flex: 1 }}
               onClick={() => navigate(`/quiz/${code}/attempt`, { state: { quiz, questionCount } })}
             >
-              🚀 Start Quiz
+              <span>Start Quiz</span>
+              <ArrowRightIcon size={18} />
             </button>
           </div>
         </div>
