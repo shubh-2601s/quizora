@@ -11,6 +11,7 @@ const CreateQuiz = () => {
   const [form, setForm] = useState({
     title: '', description: '', startTime: '', endTime: '',
     duration: 30, randomizeQuestions: false, allowReattempt: false,
+    quizMode: 'standard', strictAntiCheat: false, category: 'General',
   });
 
   const handleChange = (e) => {
@@ -60,6 +61,38 @@ const CreateQuiz = () => {
               <textarea className="textarea" name="description" value={form.description} onChange={handleChange}
                 placeholder="Brief description of what this quiz covers..." rows={3} />
             </div>
+
+            <div className="form-grid">
+              <div className="form-group">
+                <label className="label">Category / Topic</label>
+                <input className="input" name="category" value={form.category} onChange={handleChange}
+                  placeholder="e.g. JavaScript, General Knowledge, Logic" />
+              </div>
+              <div className="form-group">
+                <label className="label">Quiz Duration (minutes) *</label>
+                <input className="input" type="number" name="duration" min={1} max={300}
+                  value={form.duration} onChange={handleChange} required />
+              </div>
+            </div>
+
+            <div className="form-grid">
+              <div className="form-group">
+                <label className="label">Quiz Mode</label>
+                <select className="select" name="quizMode" value={form.quizMode} onChange={handleChange}>
+                  <option value="standard">Standard</option>
+                  <option value="elimination">Elimination (Multi-Round / Sudden Death)</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label className="label">Strict Anti-Cheat</label>
+                <select className="select" name="strictAntiCheat" value={form.strictAntiCheat.toString()}
+                  onChange={(e) => setForm({ ...form, strictAntiCheat: e.target.value === 'true' })}>
+                  <option value="false">Disabled</option>
+                  <option value="true">Enabled (Force Fullscreen & Anti-Tab Switch)</option>
+                </select>
+              </div>
+            </div>
+
             <div className="form-grid">
               <div className="form-group">
                 <label className="label">Start Date & Time *</label>
@@ -71,11 +104,6 @@ const CreateQuiz = () => {
                 <input className="input" type="datetime-local" name="endTime" value={form.endTime}
                   onChange={handleChange} required />
               </div>
-            </div>
-            <div className="form-group">
-              <label className="label">Quiz Duration (minutes) *</label>
-              <input className="input" type="number" name="duration" min={1} max={300}
-                value={form.duration} onChange={handleChange} required />
             </div>
 
             {/* Toggle Options */}

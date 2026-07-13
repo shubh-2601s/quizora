@@ -84,6 +84,137 @@ const QuizResult = () => {
             </span>
           </div>
 
+          {/* Certificate Download Panel */}
+          {percentage >= 80 && (
+            <div className="card" style={{ marginBottom: 24, textAlign: 'center', background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--primary-light) 100%)', border: '1px solid var(--primary)', padding: '24px 32px' }}>
+              <TrophyIcon size={36} style={{ color: 'var(--warning)', marginBottom: 12 }} />
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: 8, color: 'var(--text-primary)' }}>Certificate Earned!</h3>
+              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: 20 }}>
+                Excellent performance! You scored <strong>{percentage}%</strong>, qualifying you for an official Completion Certificate.
+              </p>
+              <button
+                className="btn btn-primary inline-icon gap-icon"
+                onClick={() => {
+                  const canvas = document.createElement('canvas');
+                  canvas.width = 800;
+                  canvas.height = 560;
+                  const ctx = canvas.getContext('2d');
+                  if (!ctx) return;
+
+                  // Draw background
+                  ctx.fillStyle = '#faf9f6'; // cream
+                  ctx.fillRect(0, 0, 800, 560);
+
+                  // Draw border
+                  ctx.strokeStyle = '#d4af37'; // gold
+                  ctx.lineWidth = 10;
+                  ctx.strokeRect(15, 15, 770, 530);
+
+                  ctx.strokeStyle = '#c5a028';
+                  ctx.lineWidth = 2;
+                  ctx.strokeRect(25, 25, 750, 510);
+
+                  // Draw corner accents
+                  ctx.fillStyle = '#d4af37';
+                  ctx.fillRect(15, 15, 40, 6);
+                  ctx.fillRect(15, 15, 6, 40);
+                  ctx.fillRect(745, 15, 40, 6);
+                  ctx.fillRect(779, 15, 6, 40);
+                  ctx.fillRect(15, 539, 40, 6);
+                  ctx.fillRect(15, 504, 6, 40);
+                  ctx.fillRect(745, 539, 40, 6);
+                  ctx.fillRect(779, 504, 6, 40);
+
+                  // Draw background watermark
+                  ctx.save();
+                  ctx.translate(400, 280);
+                  ctx.rotate(-Math.PI / 12);
+                  ctx.fillStyle = 'rgba(212, 175, 55, 0.05)';
+                  ctx.font = 'bold 120px sans-serif';
+                  ctx.textAlign = 'center';
+                  ctx.fillText('PASSED', 0, 0);
+                  ctx.restore();
+
+                  // Header Title
+                  ctx.textAlign = 'center';
+                  ctx.fillStyle = '#1c1b22';
+                  ctx.font = 'bold 36px Georgia, serif';
+                  ctx.fillText('CERTIFICATE OF COMPLETION', 400, 110);
+
+                  // Subtext
+                  ctx.fillStyle = '#5c5b62';
+                  ctx.font = 'italic 16px Georgia, serif';
+                  ctx.fillText('This is proudly presented to', 400, 165);
+
+                  // Student Name
+                  ctx.fillStyle = '#6366f1';
+                  ctx.font = 'bold 28px sans-serif';
+                  ctx.fillText(user?.name || 'Quiz Candidate', 400, 220);
+
+                  // Name Underline
+                  ctx.strokeStyle = '#e0e0e0';
+                  ctx.lineWidth = 1;
+                  ctx.beginPath();
+                  ctx.moveTo(200, 240);
+                  ctx.lineTo(600, 240);
+                  ctx.stroke();
+
+                  // Details
+                  ctx.fillStyle = '#5c5b62';
+                  ctx.font = '14px sans-serif';
+                  ctx.fillText('for successfully passing the assessment:', 400, 275);
+
+                  // Quiz Title
+                  ctx.fillStyle = '#1c1b22';
+                  ctx.font = 'bold italic 20px Georgia, serif';
+                  ctx.fillText(quiz?.title || 'Quiz Assessment', 400, 315);
+
+                  // Score / Date
+                  ctx.fillStyle = '#5c5b62';
+                  ctx.font = '14px sans-serif';
+                  ctx.fillText(`with a grade of ${percentage}% on ${new Date().toLocaleDateString()}`, 400, 360);
+
+                  // Signatures
+                  ctx.strokeStyle = '#9c9b9f';
+                  ctx.lineWidth = 1;
+                  ctx.beginPath();
+                  ctx.moveTo(180, 470);
+                  ctx.lineTo(330, 470);
+                  ctx.stroke();
+
+                  ctx.fillStyle = '#1c1b22';
+                  ctx.font = 'italic 16px Georgia, serif';
+                  ctx.fillText('Quizora Assessment', 255, 460);
+                  ctx.fillStyle = '#5c5b62';
+                  ctx.font = '12px sans-serif';
+                  ctx.fillText('Issuer', 255, 490);
+
+                  ctx.beginPath();
+                  ctx.moveTo(470, 470);
+                  ctx.lineTo(620, 470);
+                  ctx.stroke();
+
+                  ctx.fillStyle = '#1c1b22';
+                  ctx.font = 'italic 16px Georgia, serif';
+                  ctx.fillText('Quiz Administrator', 545, 460);
+                  ctx.fillStyle = '#5c5b62';
+                  ctx.font = '12px sans-serif';
+                  ctx.fillText('Platform Representative', 545, 490);
+
+                  const dataUrl = canvas.toDataURL('image/png');
+                  const link = document.createElement('a');
+                  link.download = `Certificate_${quiz?.title?.replace(/\s+/g, '_') || 'Completion'}.png`;
+                  link.href = dataUrl;
+                  link.click();
+                  toast.success('Certificate downloaded!');
+                }}
+                style={{ margin: '0 auto' }}
+              >
+                <span>Download Certificate</span>
+              </button>
+            </div>
+          )}
+
           {/* Tabs */}
           <div style={{ marginBottom: 20 }}>
             <div className="tabs">

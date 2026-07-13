@@ -15,6 +15,8 @@ const submissionSchema = new mongoose.Schema(
     total: { type: Number, required: true },
     timeTaken: { type: Number, default: 0 }, // seconds taken
     submittedAt: { type: Date, default: Date.now },
+    isEliminated: { type: Boolean, default: false },
+    eliminatedRound: { type: Number, default: null },
   },
   { timestamps: true }
 );

@@ -2,12 +2,13 @@ const express = require('express');
 const router = express.Router();
 const {
   submitQuiz, getUserSubmissions, getQuizSubmissions,
-  getLeaderboard, getResult, getAdminStats
+  getLeaderboard, getResult, getAdminStats, verifyRound
 } = require('../controllers/submissionController');
 const { protect } = require('../middleware/auth');
 const { requireAdmin } = require('../middleware/roleCheck');
 
 router.post('/', protect, submitQuiz);
+router.post('/verify-round', protect, verifyRound);
 router.get('/user', protect, getUserSubmissions);
 router.get('/quiz/:quizId', protect, requireAdmin, getQuizSubmissions);
 router.get('/leaderboard/:quizId', protect, getLeaderboard);

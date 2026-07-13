@@ -15,6 +15,8 @@ const questionSchema = new mongoose.Schema(
       uppercase: true,
     },
     order: { type: Number, default: 0 },
+    round: { type: Number, default: 1 },
+    explanation: { type: String, trim: true, default: '' },
   },
   { timestamps: true }
 );

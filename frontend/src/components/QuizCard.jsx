@@ -17,9 +17,24 @@ const QuizCard = ({ quiz, isAdmin = false, onDelete }) => {
       <div className="flex-between">
         <div>
           <h3 style={{ fontWeight: 700, fontSize: '1.05rem', marginBottom: 4 }}>{quiz.title}</h3>
-          <span className="badge badge-primary" style={{ fontFamily: 'monospace', fontSize: '0.85rem', letterSpacing: '0.1em' }}>
-            {quiz.code}
-          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+            <span className="badge badge-primary" style={{ fontFamily: 'monospace', fontSize: '0.85rem', letterSpacing: '0.1em' }}>
+              {quiz.code}
+            </span>
+            <span className="badge badge-accent" style={{ fontSize: '0.75rem', fontWeight: 600 }}>
+              {quiz.category || 'General'}
+            </span>
+            {quiz.quizMode === 'elimination' && (
+              <span className="badge badge-warning" style={{ fontSize: '0.75rem', fontWeight: 600 }}>
+                Elimination
+              </span>
+            )}
+            {quiz.strictAntiCheat && (
+              <span className="badge badge-error" style={{ fontSize: '0.75rem', fontWeight: 600 }}>
+                Strict Mode
+              </span>
+            )}
+          </div>
         </div>
         <span className={`badge ${badgeCls}`}>{statusLabel}</span>
       </div>

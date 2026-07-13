@@ -33,7 +33,8 @@ const QuizList = () => {
 
   const filtered = quizzes.filter((q) =>
     q.title.toLowerCase().includes(search.toLowerCase()) ||
-    q.code.toLowerCase().includes(search.toLowerCase())
+    q.code.toLowerCase().includes(search.toLowerCase()) ||
+    (q.category && q.category.toLowerCase().includes(search.toLowerCase()))
   );
 
   return (
@@ -58,7 +59,7 @@ const QuizList = () => {
           <div className="card" style={{ marginBottom: 20 }}>
             <input
               className="input"
-              placeholder="Search by title or quiz code..."
+              placeholder="Search by title, category, or quiz code..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />

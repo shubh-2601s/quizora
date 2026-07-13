@@ -13,6 +13,7 @@ const EditQuiz = () => {
   const [form, setForm] = useState({
     title: '', description: '', startTime: '', endTime: '',
     duration: 30, randomizeQuestions: false, allowReattempt: false,
+    quizMode: 'standard', strictAntiCheat: false, category: 'General',
   });
 
   useEffect(() => {
@@ -24,6 +25,9 @@ const EditQuiz = () => {
         startTime: toLocal(q.startTime), endTime: toLocal(q.endTime),
         duration: q.duration, randomizeQuestions: q.randomizeQuestions,
         allowReattempt: q.allowReattempt,
+        quizMode: q.quizMode || 'standard',
+        strictAntiCheat: q.strictAntiCheat || false,
+        category: q.category || 'General',
       });
     }).catch(() => toast.error('Failed to load quiz'))
       .finally(() => setLoading(false));
@@ -74,6 +78,37 @@ const EditQuiz = () => {
               <label className="label">Description</label>
               <textarea className="textarea" name="description" value={form.description} onChange={handleChange} rows={3} />
             </div>
+
+            <div className="form-grid">
+              <div className="form-group">
+                <label className="label">Category / Topic</label>
+                <input className="input" name="category" value={form.category} onChange={handleChange}
+                  placeholder="e.g. JavaScript, General Knowledge, Logic" />
+              </div>
+              <div className="form-group">
+                <label className="label">Duration (minutes) *</label>
+                <input className="input" type="number" name="duration" min={1} max={300} value={form.duration} onChange={handleChange} required />
+              </div>
+            </div>
+
+            <div className="form-grid">
+              <div className="form-group">
+                <label className="label">Quiz Mode</label>
+                <select className="select" name="quizMode" value={form.quizMode} onChange={handleChange}>
+                  <option value="standard">Standard</option>
+                  <option value="elimination">Elimination (Multi-Round / Sudden Death)</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label className="label">Strict Anti-Cheat</label>
+                <select className="select" name="strictAntiCheat" value={form.strictAntiCheat.toString()}
+                  onChange={(e) => setForm({ ...form, strictAntiCheat: e.target.value === 'true' })}>
+                  <option value="false">Disabled</option>
+                  <option value="true">Enabled (Force Fullscreen & Anti-Tab Switch)</option>
+                </select>
+              </div>
+            </div>
+
             <div className="form-grid">
               <div className="form-group">
                 <label className="label">Start Time *</label>
@@ -84,10 +119,7 @@ const EditQuiz = () => {
                 <input className="input" type="datetime-local" name="endTime" value={form.endTime} onChange={handleChange} required />
               </div>
             </div>
-            <div className="form-group">
-              <label className="label">Duration (minutes) *</label>
-              <input className="input" type="number" name="duration" min={1} max={300} value={form.duration} onChange={handleChange} required />
-            </div>
+
             <div style={{ background: 'var(--bg)', borderRadius: 'var(--radius-md)', padding: '16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
               {[
                 { name: 'randomizeQuestions', label: 'Randomize question order' },

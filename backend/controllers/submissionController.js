@@ -5,7 +5,7 @@ const Quiz = require('../models/Quiz');
 // @route POST /api/submissions  (User)
 const submitQuiz = async (req, res) => {
   try {
-    const { quizId, answers, timeTaken } = req.body;
+    const { quizId, answers, timeTaken, isEliminated, eliminatedRound } = req.body;
     // answers = [{ questionId, selectedAnswer }]
 
     const quiz = await Quiz.findById(quizId);
@@ -44,6 +44,8 @@ const submitQuiz = async (req, res) => {
       score,
       total: questions.length,
       timeTaken: timeTaken || 0,
+      isEliminated: isEliminated || false,
+      eliminatedRound: eliminatedRound || null,
     });
 
     res.status(201).json({
@@ -62,7 +64,7 @@ const submitQuiz = async (req, res) => {
 const getUserSubmissions = async (req, res) => {
   try {
     const submissions = await Submission.find({ user: req.user._id })
-      .populate('quiz', 'title code duration')
+      .populate('quiz', 'title code duration quizMode category')
       .sort({ submittedAt: -1 });
     res.json({ submissions });
   } catch (error) {
@@ -112,8 +114,8 @@ const getLeaderboard = async (req, res) => {
 const getResult = async (req, res) => {
   try {
     const submission = await Submission.findById(req.params.submissionId)
-      .populate('quiz', 'title code duration')
-      .populate({ path: 'answers.question', select: 'question optionA optionB optionC optionD correctAnswer' });
+      .populate('quiz', 'title code duration quizMode strictAntiCheat')
+      .populate({ path: 'answers.question', select: 'question optionA optionB optionC optionD correctAnswer explanation round' });
     if (!submission) return res.status(404).json({ message: 'Submission not found' });
     if (submission.user.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Access denied' });
@@ -145,4 +147,96 @@ const getAdminStats = async (req, res) => {
   }
 };
 
-module.exports = { submitQuiz, getUserSubmissions, getQuizSubmissions, getLeaderboard, getResult, getAdminStats };
+// @route POST /api/submissions/verify-round  (User)
+const verifyRound = async (req, res) => {
+  try {
+    const { quizId, round, answers, timeTaken } = req.body;
+
+    const quiz = await Quiz.findById(quizId);
+    if (!quiz) return res.status(404).json({ message: 'Quiz not found' });
+
+    const questions = await Question.find({ quiz: quizId });
+    // Filter questions of this round
+    const roundQuestions = questions.filter(q => q.round === round);
+
+    // Check if user got all questions in this round correct
+    let roundPassed = true;
+    roundQuestions.forEach(q => {
+      const userAns = answers.find(a => a.questionId === q._id.toString());
+      if (!userAns || !userAns.selectedAnswer || userAns.selectedAnswer.toUpperCase() !== q.correctAnswer) {
+        roundPassed = false;
+      }
+    });
+
+    if (!roundPassed) {
+      // Create an eliminated submission record
+      let score = 0;
+      const gradedAnswers = questions.map((q) => {
+        const submitted = answers?.find((a) => a.questionId === q._id.toString());
+        const selected = submitted?.selectedAnswer || null;
+        const isCorrect = selected && selected.toUpperCase() === q.correctAnswer;
+        if (isCorrect) score++;
+        return { question: q._id, selectedAnswer: selected, isCorrect };
+      });
+
+      const submission = await Submission.create({
+        quiz: quizId,
+        user: req.user._id,
+        answers: gradedAnswers,
+        score,
+        total: questions.length,
+        timeTaken: timeTaken || 0,
+        isEliminated: true,
+        eliminatedRound: round,
+      });
+
+      return res.json({
+        eliminated: true,
+        message: `Eliminated in Round ${round}`,
+        submissionId: submission._id,
+      });
+    }
+
+    // Check if this is the final round
+    const maxRound = Math.max(...questions.map(q => q.round || 1));
+    if (round === maxRound) {
+      // They passed the final round! Submit the whole quiz!
+      let score = 0;
+      const gradedAnswers = questions.map((q) => {
+        const submitted = answers?.find((a) => a.questionId === q._id.toString());
+        const selected = submitted?.selectedAnswer || null;
+        const isCorrect = selected && selected.toUpperCase() === q.correctAnswer;
+        if (isCorrect) score++;
+        return { question: q._id, selectedAnswer: selected, isCorrect };
+      });
+
+      const submission = await Submission.create({
+        quiz: quizId,
+        user: req.user._id,
+        answers: gradedAnswers,
+        score,
+        total: questions.length,
+        timeTaken: timeTaken || 0,
+        isEliminated: false,
+        eliminatedRound: null,
+      });
+
+      return res.json({
+        eliminated: false,
+        quizCompleted: true,
+        submissionId: submission._id,
+      });
+    }
+
+    // Passed the round, proceed to next round!
+    res.json({
+      eliminated: false,
+      passed: true,
+      nextRound: round + 1,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+module.exports = { submitQuiz, getUserSubmissions, getQuizSubmissions, getLeaderboard, getResult, getAdminStats, verifyRound };

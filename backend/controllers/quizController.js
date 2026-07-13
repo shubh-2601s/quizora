@@ -6,7 +6,7 @@ const { generateCode } = require('../utils/generateCode');
 // @route POST /api/quizzes  (Admin)
 const createQuiz = async (req, res) => {
   try {
-    const { title, description, startTime, endTime, duration, randomizeQuestions, allowReattempt } = req.body;
+    const { title, description, startTime, endTime, duration, randomizeQuestions, allowReattempt, quizMode, strictAntiCheat, category } = req.body;
     if (!title || !startTime || !endTime || !duration) {
       return res.status(400).json({ message: 'Title, startTime, endTime, and duration are required' });
     }
@@ -29,6 +29,9 @@ const createQuiz = async (req, res) => {
       createdBy: req.user._id,
       randomizeQuestions: randomizeQuestions || false,
       allowReattempt: allowReattempt || false,
+      quizMode: quizMode || 'standard',
+      strictAntiCheat: strictAntiCheat || false,
+      category: category || 'General',
     });
 
     res.status(201).json({ message: 'Quiz created successfully', quiz });
@@ -114,7 +117,7 @@ const updateQuiz = async (req, res) => {
     if (quiz.createdBy.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: 'Not authorized to edit this quiz' });
     }
-    const { title, description, startTime, endTime, duration, randomizeQuestions, allowReattempt } = req.body;
+    const { title, description, startTime, endTime, duration, randomizeQuestions, allowReattempt, quizMode, strictAntiCheat, category } = req.body;
     if (title) quiz.title = title;
     if (description !== undefined) quiz.description = description;
     if (startTime) quiz.startTime = new Date(startTime);
@@ -122,6 +125,9 @@ const updateQuiz = async (req, res) => {
     if (duration) quiz.duration = duration;
     if (randomizeQuestions !== undefined) quiz.randomizeQuestions = randomizeQuestions;
     if (allowReattempt !== undefined) quiz.allowReattempt = allowReattempt;
+    if (quizMode) quiz.quizMode = quizMode;
+    if (strictAntiCheat !== undefined) quiz.strictAntiCheat = strictAntiCheat;
+    if (category) quiz.category = category;
     await quiz.save();
     res.json({ message: 'Quiz updated successfully', quiz });
   } catch (error) {

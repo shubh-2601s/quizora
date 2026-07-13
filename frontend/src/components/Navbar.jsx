@@ -1,11 +1,22 @@
+import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { TargetIcon, CrownIcon, UserIcon, LogOutIcon } from './Icons';
+import { TargetIcon, CrownIcon, UserIcon, LogOutIcon, SunIcon, MoonIcon } from './Icons';
 
 const Navbar = () => {
   const { user, logout, isAdmin } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [theme, setTheme] = useState(localStorage.getItem('quizapp_theme') || 'light');
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('quizapp_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+  };
 
   const handleLogout = () => {
     logout();
@@ -40,6 +51,14 @@ const Navbar = () => {
         </div>
 
         <div className="nav-user">
+          <button
+            onClick={toggleTheme}
+            className="btn btn-outline btn-sm inline-icon"
+            style={{ marginRight: 8, padding: '6px 10px', background: 'none' }}
+            title={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
+          >
+            {theme === 'light' ? <MoonIcon size={14} /> : <SunIcon size={14} />}
+          </button>
           <div className="nav-avatar" title={user?.name}>
             {user?.name?.charAt(0).toUpperCase()}
           </div>

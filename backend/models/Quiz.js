@@ -11,6 +11,9 @@ const quizSchema = new mongoose.Schema(
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     randomizeQuestions: { type: Boolean, default: false },
     allowReattempt: { type: Boolean, default: false },
+    quizMode: { type: String, enum: ['standard', 'elimination'], default: 'standard' },
+    strictAntiCheat: { type: Boolean, default: false },
+    category: { type: String, trim: true, default: 'General' },
   },
   { timestamps: true }
 );

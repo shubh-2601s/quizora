@@ -9,7 +9,7 @@ const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 *
 // @route POST /api/questions  (Admin)
 const addQuestion = async (req, res) => {
   try {
-    const { quizId, question, optionA, optionB, optionC, optionD, correctAnswer } = req.body;
+    const { quizId, question, optionA, optionB, optionC, optionD, correctAnswer, round, explanation } = req.body;
     if (!quizId || !question || !optionA || !optionB || !optionC || !optionD || !correctAnswer) {
       return res.status(400).json({ message: 'All fields are required' });
     }
@@ -26,6 +26,8 @@ const addQuestion = async (req, res) => {
       optionD,
       correctAnswer: correctAnswer.toUpperCase(),
       order: count + 1,
+      round: round ? parseInt(round, 10) : 1,
+      explanation: explanation || '',
     });
     res.status(201).json({ message: 'Question added successfully', question: newQuestion });
   } catch (error) {
@@ -58,7 +60,7 @@ const bulkUpload = async (req, res) => {
     let startOrder = await Question.countDocuments({ quiz: quizId });
 
     records.forEach((row, i) => {
-      const { question, optionA, optionB, optionC, optionD, correctAnswer } = row;
+      const { question, optionA, optionB, optionC, optionD, correctAnswer, round, explanation } = row;
       if (!question || !optionA || !optionB || !optionC || !optionD || !correctAnswer) {
         errors.push(`Row ${i + 2}: Missing required fields`);
         return;
@@ -76,6 +78,8 @@ const bulkUpload = async (req, res) => {
         optionD: optionD.trim(),
         correctAnswer: correctAnswer.toUpperCase(),
         order: startOrder + questions.length + 1,
+        round: round ? parseInt(round, 10) : 1,
+        explanation: explanation ? explanation.trim() : '',
       });
     });
 
@@ -111,9 +115,9 @@ const getQuestions = async (req, res) => {
       }
     }
 
-    // Remove correctAnswer from user-facing response
+    // Remove correctAnswer and explanation from user-facing response
     if (req.user.role !== 'admin') {
-      questions = questions.map(({ correctAnswer, ...rest }) => rest);
+      questions = questions.map(({ correctAnswer, explanation, ...rest }) => rest);
     }
 
     res.json({ questions, total: questions.length });
