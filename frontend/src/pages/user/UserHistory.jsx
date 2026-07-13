@@ -167,6 +167,8 @@ const UserHistory = () => {
                 <tbody>
                   {filteredSubmissions.map((sub, i) => {
                     const pct = Math.round((sub.score / sub.total) * 100);
+                    const cutoff = sub.quiz?.passingPercentage !== undefined ? sub.quiz.passingPercentage : 50;
+                    const passed = pct >= cutoff;
                     return (
                       <tr key={sub._id}>
                         <td>{i + 1}</td>
@@ -179,7 +181,7 @@ const UserHistory = () => {
                         <td><span className="badge badge-primary" style={{ fontFamily: 'monospace' }}>{sub.quiz?.code}</span></td>
                         <td><strong>{sub.score}</strong>/{sub.total}</td>
                         <td>
-                          <span className={`badge ${pct >= 50 ? 'badge-success' : 'badge-error'}`}>{pct}%</span>
+                          <span className={`badge ${passed ? 'badge-success' : 'badge-error'}`}>{pct}%</span>
                         </td>
                         <td>{Math.floor(sub.timeTaken / 60)}m {sub.timeTaken % 60}s</td>
                         <td style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>

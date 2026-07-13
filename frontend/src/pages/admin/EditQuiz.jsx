@@ -14,6 +14,10 @@ const EditQuiz = () => {
     title: '', description: '', startTime: '', endTime: '',
     duration: 30, randomizeQuestions: false, allowReattempt: false,
     quizMode: 'standard', strictAntiCheat: false, category: 'General',
+    nextQuizCode: '',
+    passcode: '',
+    code: '',
+    passingPercentage: 50,
   });
 
   useEffect(() => {
@@ -28,6 +32,10 @@ const EditQuiz = () => {
         quizMode: q.quizMode || 'standard',
         strictAntiCheat: q.strictAntiCheat || false,
         category: q.category || 'General',
+        nextQuizCode: q.nextQuizCode || '',
+        passcode: q.passcode || '',
+        code: q.code || '',
+        passingPercentage: q.passingPercentage || 50,
       });
     }).catch(() => toast.error('Failed to load quiz'))
       .finally(() => setLoading(false));
@@ -66,13 +74,18 @@ const EditQuiz = () => {
               <EditIcon size={24} style={{ color: 'var(--primary)' }} />
               <span>Edit Quiz</span>
             </h1>
-            <p className="page-subtitle">Update quiz details. The quiz code cannot be changed.</p>
+            <p className="page-subtitle">Update quiz details.</p>
           </div>
 
           <form className="card" style={{ display: 'flex', flexDirection: 'column', gap: 20 }} onSubmit={handleSubmit}>
             <div className="form-group">
               <label className="label">Quiz Title *</label>
               <input className="input" name="title" value={form.title} onChange={handleChange} required />
+            </div>
+            <div className="form-group">
+              <label className="label">Quiz Code</label>
+              <input className="input" name="code" value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })}
+                placeholder="e.g. CHEM101" maxLength={10} required />
             </div>
             <div className="form-group">
               <label className="label">Description</label>
@@ -100,6 +113,14 @@ const EditQuiz = () => {
                 </select>
               </div>
               <div className="form-group">
+                <label className="label">Passing Cutoff (%) *</label>
+                <input className="input" type="number" name="passingPercentage" min={1} max={100}
+                  value={form.passingPercentage} onChange={handleChange} required />
+              </div>
+            </div>
+
+            <div className="form-grid">
+              <div className="form-group">
                 <label className="label">Strict Anti-Cheat</label>
                 <select className="select" name="strictAntiCheat" value={form.strictAntiCheat.toString()}
                   onChange={(e) => setForm({ ...form, strictAntiCheat: e.target.value === 'true' })}>
@@ -107,6 +128,17 @@ const EditQuiz = () => {
                   <option value="true">Enabled (Force Fullscreen & Anti-Tab Switch)</option>
                 </select>
               </div>
+              <div className="form-group">
+                <label className="label">Passcode (Optional)</label>
+                <input className="input" name="passcode" value={form.passcode || ''} onChange={handleChange}
+                  placeholder="e.g. SECRET123" />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label className="label">Next Quiz Code (Optional Chain)</label>
+              <input className="input" name="nextQuizCode" value={form.nextQuizCode || ''} onChange={handleChange}
+                placeholder="e.g. CHEM101" />
             </div>
 
             <div className="form-grid">

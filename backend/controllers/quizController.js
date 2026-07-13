@@ -6,17 +6,24 @@ const { generateCode } = require('../utils/generateCode');
 // @route POST /api/quizzes  (Admin)
 const createQuiz = async (req, res) => {
   try {
-    const { title, description, startTime, endTime, duration, randomizeQuestions, allowReattempt, quizMode, strictAntiCheat, category } = req.body;
+    const { title, description, startTime, endTime, duration, randomizeQuestions, allowReattempt, quizMode, strictAntiCheat, category, nextQuizCode, passcode, passingPercentage } = req.body;
     if (!title || !startTime || !endTime || !duration) {
       return res.status(400).json({ message: 'Title, startTime, endTime, and duration are required' });
     }
 
-    let code;
-    let isUnique = false;
-    while (!isUnique) {
-      code = generateCode();
+    let code = req.body.code ? req.body.code.trim().toUpperCase() : '';
+    if (code) {
       const exists = await Quiz.findOne({ code });
-      if (!exists) isUnique = true;
+      if (exists) {
+        return res.status(400).json({ message: 'Quiz code is already taken. Please choose another.' });
+      }
+    } else {
+      let isUnique = false;
+      while (!isUnique) {
+        code = generateCode();
+        const exists = await Quiz.findOne({ code });
+        if (!exists) isUnique = true;
+      }
     }
 
     const quiz = await Quiz.create({
@@ -32,6 +39,9 @@ const createQuiz = async (req, res) => {
       quizMode: quizMode || 'standard',
       strictAntiCheat: strictAntiCheat || false,
       category: category || 'General',
+      nextQuizCode: nextQuizCode || '',
+      passcode: passcode || '',
+      passingPercentage: passingPercentage !== undefined ? Number(passingPercentage) : 50,
     });
 
     res.status(201).json({ message: 'Quiz created successfully', quiz });
@@ -68,6 +78,17 @@ const getQuizByCode = async (req, res) => {
     const quiz = await Quiz.findOne({ code: req.params.code.toUpperCase() });
     if (!quiz) {
       return res.status(404).json({ message: 'Invalid quiz code. No quiz found.' });
+    }
+
+    // Check passcode if quiz is passcode protected
+    if (quiz.passcode && quiz.passcode.trim() !== '') {
+      const userPasscode = req.query.passcode;
+      if (!userPasscode || userPasscode.trim() !== quiz.passcode.trim()) {
+        return res.status(403).json({
+          requirePasscode: true,
+          message: 'This quiz is passcode protected. Please enter the correct passcode.',
+        });
+      }
     }
 
     const now = new Date();
@@ -117,7 +138,17 @@ const updateQuiz = async (req, res) => {
     if (quiz.createdBy.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: 'Not authorized to edit this quiz' });
     }
-    const { title, description, startTime, endTime, duration, randomizeQuestions, allowReattempt, quizMode, strictAntiCheat, category } = req.body;
+    const { title, description, startTime, endTime, duration, randomizeQuestions, allowReattempt, quizMode, strictAntiCheat, category, nextQuizCode, passcode, code, passingPercentage } = req.body;
+    if (code) {
+      const customCode = code.trim().toUpperCase();
+      if (customCode !== quiz.code) {
+        const exists = await Quiz.findOne({ code: customCode });
+        if (exists) {
+          return res.status(400).json({ message: 'Quiz code is already taken. Please choose another.' });
+        }
+        quiz.code = customCode;
+      }
+    }
     if (title) quiz.title = title;
     if (description !== undefined) quiz.description = description;
     if (startTime) quiz.startTime = new Date(startTime);
@@ -128,6 +159,9 @@ const updateQuiz = async (req, res) => {
     if (quizMode) quiz.quizMode = quizMode;
     if (strictAntiCheat !== undefined) quiz.strictAntiCheat = strictAntiCheat;
     if (category) quiz.category = category;
+    if (nextQuizCode !== undefined) quiz.nextQuizCode = nextQuizCode;
+    if (passcode !== undefined) quiz.passcode = passcode;
+    if (passingPercentage !== undefined) quiz.passingPercentage = Number(passingPercentage);
     await quiz.save();
     res.json({ message: 'Quiz updated successfully', quiz });
   } catch (error) {

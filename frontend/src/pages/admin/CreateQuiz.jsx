@@ -12,6 +12,10 @@ const CreateQuiz = () => {
     title: '', description: '', startTime: '', endTime: '',
     duration: 30, randomizeQuestions: false, allowReattempt: false,
     quizMode: 'standard', strictAntiCheat: false, category: 'General',
+    nextQuizCode: '',
+    passcode: '',
+    code: '',
+    passingPercentage: 50,
   });
 
   const handleChange = (e) => {
@@ -57,6 +61,11 @@ const CreateQuiz = () => {
                 placeholder="e.g. JavaScript Fundamentals Quiz" required />
             </div>
             <div className="form-group">
+              <label className="label">Custom Quiz Code (Optional - leave blank to auto-generate)</label>
+              <input className="input" name="code" value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })}
+                placeholder="e.g. CHEM101" maxLength={10} />
+            </div>
+            <div className="form-group">
               <label className="label">Description</label>
               <textarea className="textarea" name="description" value={form.description} onChange={handleChange}
                 placeholder="Brief description of what this quiz covers..." rows={3} />
@@ -84,6 +93,14 @@ const CreateQuiz = () => {
                 </select>
               </div>
               <div className="form-group">
+                <label className="label">Passing Cutoff (%) *</label>
+                <input className="input" type="number" name="passingPercentage" min={1} max={100}
+                  value={form.passingPercentage} onChange={handleChange} required />
+              </div>
+            </div>
+
+            <div className="form-grid">
+              <div className="form-group">
                 <label className="label">Strict Anti-Cheat</label>
                 <select className="select" name="strictAntiCheat" value={form.strictAntiCheat.toString()}
                   onChange={(e) => setForm({ ...form, strictAntiCheat: e.target.value === 'true' })}>
@@ -91,6 +108,17 @@ const CreateQuiz = () => {
                   <option value="true">Enabled (Force Fullscreen & Anti-Tab Switch)</option>
                 </select>
               </div>
+              <div className="form-group">
+                <label className="label">Passcode (Optional)</label>
+                <input className="input" name="passcode" value={form.passcode} onChange={handleChange}
+                  placeholder="e.g. SECRET123" />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label className="label">Next Quiz Code (Optional Chain)</label>
+              <input className="input" name="nextQuizCode" value={form.nextQuizCode} onChange={handleChange}
+                placeholder="e.g. CHEM101" />
             </div>
 
             <div className="form-grid">

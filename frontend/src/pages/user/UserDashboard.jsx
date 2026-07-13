@@ -10,6 +10,8 @@ const UserDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [code, setCode] = useState('');
+  const [requirePasscode, setRequirePasscode] = useState(false);
+  const [passcode, setPasscode] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleCodeSubmit = async (e) => {
@@ -17,17 +19,25 @@ const UserDashboard = () => {
     if (!code.trim()) return;
     setLoading(true);
     try {
-      const { data } = await api.get(`/quizzes/code/${code.trim()}`);
-      navigate(`/quiz/${code.trim()}/instructions`, { state: { quizData: data } });
+      const url = requirePasscode
+        ? `/quizzes/code/${code.trim()}?passcode=${encodeURIComponent(passcode.trim())}`
+        : `/quizzes/code/${code.trim()}`;
+      const { data } = await api.get(url);
+      navigate(`/quiz/${code.trim()}/instructions`, { state: { quizData: data, passcode: passcode.trim() } });
     } catch (err) {
-      const msg = err.response?.data?.message;
-      const alreadyAttempted = err.response?.data?.alreadyAttempted;
-      if (alreadyAttempted) {
-        toast.error('You have already attempted this quiz!');
-        const sub = err.response?.data?.submission;
-        if (sub) navigate(`/result/${sub._id}`);
+      if (err.response?.status === 403 && err.response?.data?.requirePasscode) {
+        setRequirePasscode(true);
+        toast.error('Passcode required for this quiz!');
       } else {
-        toast.error(msg || 'Invalid quiz code');
+        const msg = err.response?.data?.message;
+        const alreadyAttempted = err.response?.data?.alreadyAttempted;
+        if (alreadyAttempted) {
+          toast.error('You have already attempted this quiz!');
+          const sub = err.response?.data?.submission;
+          if (sub) navigate(`/result/${sub._id}`);
+        } else {
+          toast.error(msg || 'Invalid quiz code');
+        }
       }
     } finally {
       setLoading(false);
@@ -77,12 +87,42 @@ const UserDashboard = () => {
                 onChange={(e) => setCode(e.target.value.toUpperCase())}
                 placeholder="QUIZ CODE"
                 maxLength={10}
-                autoFocus
+                disabled={requirePasscode || loading}
+                autoFocus={!requirePasscode}
               />
+              {requirePasscode && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--error)' }}>
+                    🔒 Passcode required to enter this quiz:
+                  </label>
+                  <input
+                    className="code-input"
+                    type="password"
+                    value={passcode}
+                    onChange={(e) => setPasscode(e.target.value)}
+                    placeholder="ENTER PASSCODE"
+                    autoFocus
+                    required
+                  />
+                </div>
+              )}
               <button className="btn btn-primary btn-full btn-lg inline-icon gap-icon" type="submit" disabled={loading || !code.trim()}>
-                <span>{loading ? 'Searching...' : 'Find Quiz'}</span>
+                <span>{loading ? 'Processing...' : requirePasscode ? 'Enter Quiz' : 'Find Quiz'}</span>
                 {!loading && <ArrowRightIcon size={18} />}
               </button>
+              {requirePasscode && (
+                <button
+                  type="button"
+                  className="btn btn-outline btn-full"
+                  onClick={() => {
+                    setRequirePasscode(false);
+                    setPasscode('');
+                  }}
+                  disabled={loading}
+                >
+                  Cancel
+                </button>
+              )}
             </form>
           </div>
 

@@ -14,6 +14,9 @@ const quizSchema = new mongoose.Schema(
     quizMode: { type: String, enum: ['standard', 'elimination'], default: 'standard' },
     strictAntiCheat: { type: Boolean, default: false },
     category: { type: String, trim: true, default: 'General' },
+    nextQuizCode: { type: String, trim: true, default: '' },
+    passcode: { type: String, trim: true, default: '' },
+    passingPercentage: { type: Number, default: 50, min: 0, max: 100 },
   },
   { timestamps: true }
 );

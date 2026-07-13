@@ -1,19 +1,90 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
+import api from '../../api/axios';
+import toast from 'react-hot-toast';
 import { HelpCircleIcon, ClockIcon, TargetIcon, FileTextIcon, ArrowLeftIcon, ArrowRightIcon } from '../../components/Icons';
 
 const QuizInstructions = () => {
   const { code } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const { quizData } = location.state || {};
+
+  const [quizData, setQuizData] = useState(location.state?.quizData || null);
+  const [loading, setLoading] = useState(!quizData);
+  const [requirePasscode, setRequirePasscode] = useState(false);
+  const [passcode, setPasscode] = useState(location.state?.passcode || '');
+  const [passcodeInput, setPasscodeInput] = useState('');
   const [consented, setConsented] = useState(false);
 
-  if (!quizData) {
-    navigate('/dashboard');
-    return null;
+  const fetchDetails = async (passVal) => {
+    try {
+      setLoading(true);
+      const url = passVal 
+        ? `/quizzes/code/${code}?passcode=${encodeURIComponent(passVal)}`
+        : `/quizzes/code/${code}`;
+      const { data } = await api.get(url);
+      setQuizData(data);
+      setRequirePasscode(false);
+      setPasscode(passVal || '');
+    } catch (err) {
+      if (err.response?.status === 403 && err.response?.data?.requirePasscode) {
+        setRequirePasscode(true);
+        if (passVal) toast.error('Incorrect passcode!');
+      } else {
+        toast.error(err.response?.data?.message || 'Failed to load quiz details');
+        navigate('/dashboard');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!quizData) {
+      fetchDetails(passcode);
+    }
+  }, [code]);
+
+  if (loading) return <div className="loading-wrapper"><div className="spinner" /></div>;
+
+  if (requirePasscode && !quizData) {
+    return (
+      <>
+        <Navbar />
+        <div className="page-wrapper">
+          <div className="container" style={{ maxWidth: 480 }}>
+            <div className="card" style={{ textAlign: 'center', padding: '36px' }}>
+              <div style={{ fontSize: '2.5rem', marginBottom: 16 }}>🔒</div>
+              <h2 style={{ fontWeight: 800, fontSize: '1.4rem', marginBottom: 8, color: 'var(--text-primary)' }}>Passcode Required</h2>
+              <p style={{ color: 'var(--text-secondary)', marginBottom: 24, fontSize: '0.9rem' }}>
+                This quiz is password protected. Please enter the passcode to view instructions and start.
+              </p>
+              <form onSubmit={(e) => { e.preventDefault(); fetchDetails(passcodeInput); }} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <input
+                  className="code-input"
+                  type="password"
+                  value={passcodeInput}
+                  onChange={(e) => setPasscodeInput(e.target.value)}
+                  placeholder="ENTER PASSCODE"
+                  required
+                  autoFocus
+                />
+                <button className="btn btn-primary btn-full btn-lg" type="submit">
+                  Verify & Proceed
+                </button>
+                <button type="button" className="btn btn-outline btn-full" onClick={() => navigate('/dashboard')}>
+                  Cancel
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </>
+    );
   }
+
+  if (!quizData) return null;
 
   const { quiz, questionCount } = quizData;
 

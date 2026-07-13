@@ -64,7 +64,7 @@ const submitQuiz = async (req, res) => {
 const getUserSubmissions = async (req, res) => {
   try {
     const submissions = await Submission.find({ user: req.user._id })
-      .populate('quiz', 'title code duration quizMode category')
+      .populate('quiz', 'title code duration quizMode category passingPercentage')
       .sort({ submittedAt: -1 });
     res.json({ submissions });
   } catch (error) {
@@ -114,7 +114,7 @@ const getLeaderboard = async (req, res) => {
 const getResult = async (req, res) => {
   try {
     const submission = await Submission.findById(req.params.submissionId)
-      .populate('quiz', 'title code duration quizMode strictAntiCheat')
+      .populate('quiz', 'title code duration quizMode strictAntiCheat nextQuizCode passingPercentage')
       .populate({ path: 'answers.question', select: 'question optionA optionB optionC optionD correctAnswer explanation round' });
     if (!submission) return res.status(404).json({ message: 'Submission not found' });
     if (submission.user.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
@@ -159,14 +159,16 @@ const verifyRound = async (req, res) => {
     // Filter questions of this round
     const roundQuestions = questions.filter(q => q.round === round);
 
-    // Check if user got all questions in this round correct
-    let roundPassed = true;
+    // Check if user reached the passing cutoff percentage in this round
+    let roundCorrect = 0;
     roundQuestions.forEach(q => {
       const userAns = answers.find(a => a.questionId === q._id.toString());
-      if (!userAns || !userAns.selectedAnswer || userAns.selectedAnswer.toUpperCase() !== q.correctAnswer) {
-        roundPassed = false;
+      if (userAns && userAns.selectedAnswer && userAns.selectedAnswer.toUpperCase() === q.correctAnswer) {
+        roundCorrect++;
       }
     });
+    const cutoffDecimal = quiz.passingPercentage !== undefined ? quiz.passingPercentage / 100 : 0.5;
+    const roundPassed = roundQuestions.length > 0 ? (roundCorrect / roundQuestions.length) >= cutoffDecimal : true;
 
     if (!roundPassed) {
       // Create an eliminated submission record

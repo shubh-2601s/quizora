@@ -4,7 +4,8 @@ import api from '../../api/axios';
 import Navbar from '../../components/Navbar';
 import Leaderboard from '../../components/Leaderboard';
 import { useAuth } from '../../context/AuthContext';
-import { CheckCircleIcon, XCircleIcon, FileTextIcon, TrophyIcon, ArrowLeftIcon, HistoryIcon } from '../../components/Icons';
+import toast from 'react-hot-toast';
+import { CheckCircleIcon, XCircleIcon, FileTextIcon, TrophyIcon, ArrowLeftIcon, HistoryIcon, ArrowRightIcon, AlertCircleIcon } from '../../components/Icons';
 
 const OPTIONS = ['A', 'B', 'C', 'D'];
 
@@ -36,9 +37,11 @@ const QuizResult = () => {
   if (loading) return <div className="loading-wrapper"><div className="spinner" /></div>;
   if (!submission) return null;
 
-  const { score, total, quiz, answers, timeTaken } = submission;
+  const { score, total, quiz, answers, timeTaken, isEliminated: backendIsEliminated, eliminatedRound } = submission;
   const percentage = Math.round((score / total) * 100);
-  const passed = percentage >= 50;
+  const cutoff = quiz?.passingPercentage !== undefined ? quiz.passingPercentage : 50;
+  const passed = percentage >= cutoff;
+  const isEliminated = backendIsEliminated || !passed;
 
   return (
     <>
@@ -80,8 +83,31 @@ const QuizResult = () => {
             </div>
             <span className={`badge ${passed ? 'badge-success' : 'badge-error'} inline-icon gap-icon`} style={{ fontSize: '0.9rem', padding: '6px 16px' }}>
               {passed ? <CheckCircleIcon size={16} /> : <XCircleIcon size={16} />}
-              <span>{passed ? 'Passed' : 'Failed'}</span>
+              <span>{passed ? 'Passed' : 'Failed'} (Cutoff: {cutoff}%)</span>
             </span>
+
+            {isEliminated && (
+              <div style={{
+                marginTop: 20,
+                padding: '12px 16px',
+                background: 'rgba(239, 68, 68, 0.08)',
+                border: '1px solid var(--error)',
+                borderRadius: 'var(--radius-md)',
+                color: 'var(--error)',
+                fontSize: '0.9rem',
+                fontWeight: 600,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8
+              }}>
+                <XCircleIcon size={16} />
+                <span>
+                  {eliminatedRound 
+                    ? `Eliminated in Round ${eliminatedRound}.`
+                    : `You did not qualify to proceed.`}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Certificate Download Panel */}
@@ -279,6 +305,38 @@ const QuizResult = () => {
                 <span>Quiz Leaderboard</span>
               </h2>
               <Leaderboard data={leaderboard} currentUserId={user?._id} />
+            </div>
+          )}
+
+          {quiz.nextQuizCode && (
+            <div className="card" style={{
+              marginTop: 20,
+              padding: '20px 24px',
+              border: isEliminated ? '1px solid var(--error)' : '1px solid var(--primary)',
+              background: isEliminated ? 'rgba(239, 68, 68, 0.05)' : 'rgba(99, 102, 241, 0.05)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: 16
+            }}>
+              <div>
+                <h4 style={{ fontWeight: 700, margin: 0, color: isEliminated ? 'var(--error)' : 'var(--primary)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                  {isEliminated ? <XCircleIcon size={18} /> : <CheckCircleIcon size={18} />}
+                  <span>{isEliminated ? 'Access Blocked' : 'Qualified!'}</span>
+                </h4>
+                <p style={{ fontSize: '0.9rem', margin: '6px 0 0 0', color: 'var(--text-secondary)' }}>
+                  {isEliminated 
+                    ? "You cannot proceed to the next quiz. Sorry, thanks!" 
+                    : "You qualified to move to the next quiz (Code: " + quiz.nextQuizCode.toUpperCase() + ")."}
+                </p>
+              </div>
+              {!isEliminated && (
+                <Link to={`/quiz/${quiz.nextQuizCode.toUpperCase()}/instructions`} className="btn btn-primary inline-icon gap-icon">
+                  <span>Start Next Quiz</span>
+                  <ArrowRightIcon size={16} />
+                </Link>
+              )}
             </div>
           )}
 
