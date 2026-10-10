@@ -187,4 +187,30 @@ const deleteQuiz = async (req, res) => {
   }
 };
 
-module.exports = { createQuiz, getAllQuizzes, getQuizByCode, getQuizById, updateQuiz, deleteQuiz };
+// @route GET /api/quizzes/public  (User - explore active public quizzes)
+const getPublicQuizzes = async (req, res) => {
+  try {
+    const now = new Date();
+    const quizzes = await Quiz.find({
+      endTime: { $gte: now },
+      passcode: { $in: ['', null] },
+    })
+      .sort({ startTime: -1 })
+      .limit(10)
+      .lean();
+
+    const quizzesWithCounts = await Promise.all(
+      quizzes.map(async (quiz) => {
+        const questionCount = await Question.countDocuments({ quiz: quiz._id });
+        const hasAttempted = await Submission.exists({ quiz: quiz._id, user: req.user._id });
+        return { ...quiz, questionCount, hasAttempted: !!hasAttempted };
+      })
+    );
+
+    res.json({ quizzes: quizzesWithCounts });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+module.exports = { createQuiz, getAllQuizzes, getQuizByCode, getQuizById, updateQuiz, deleteQuiz, getPublicQuizzes };

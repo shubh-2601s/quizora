@@ -42,13 +42,39 @@ const Register = () => {
     <div className="auth-wrapper">
       <div className="auth-card">
         <div className="auth-logo">
-          <div className="auth-logo-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <TargetIcon size={24} />
+          <div className="auth-logo-icon">
+            <TargetIcon size={26} />
           </div>
-          <span style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)' }}>QuizApp</span>
+          <div>
+            <span
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: '1.6rem',
+                fontWeight: 900,
+                background: 'linear-gradient(135deg, #6366F1 0%, #A855F7 60%, #EC4899 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                display: 'block',
+                lineHeight: 1.1,
+              }}
+            >
+              Quizora
+            </span>
+            <span
+              style={{
+                fontSize: '0.72rem',
+                fontWeight: 600,
+                color: 'var(--text-secondary)',
+                letterSpacing: '0.04em',
+                lineHeight: 1,
+              }}
+            >
+              Interactive Quizzes
+            </span>
+          </div>
         </div>
-        <h1 className="auth-title">Create account</h1>
-        <p className="auth-subtitle">Join thousands of quiz takers and creators</p>
+        <h1 className="auth-title">Create an Account</h1>
+        <p className="auth-subtitle">Sign up to take quizzes, earn achievements, and track your scores</p>
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="form-group">

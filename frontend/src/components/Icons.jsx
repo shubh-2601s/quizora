@@ -270,3 +270,21 @@ export const MoonIcon = ({ size = 20, className = "" }) => (
     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
   </svg>
 );
+
+export const FlameIcon = ({ size = 20, className = "" }) => (
+  <svg {...baseSvgProps(size)} className={className}>
+    <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
+  </svg>
+);
+
+export const ShieldIcon = ({ size = 20, className = "" }) => (
+  <svg {...baseSvgProps(size)} className={className}>
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+  </svg>
+);
+
+export const ZapIcon = ({ size = 20, className = "" }) => (
+  <svg {...baseSvgProps(size)} className={className}>
+    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+  </svg>
+);

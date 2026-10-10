@@ -30,10 +30,10 @@ const AdminDashboard = () => {
   const activeQuizzes = recentQuizzes.filter(q => now >= new Date(q.startTime) && now <= new Date(q.endTime)).length;
 
   const statItems = [
-    { icon: <FileTextIcon size={20} />, label: 'Total Quizzes', value: stats?.totalQuizzes ?? 0, bg: '#EDE9FF', color: '#6C63FF' },
-    { icon: <SparklesIcon size={20} />, label: 'Active Now', value: activeQuizzes, bg: '#D1FAE5', color: '#065F46' },
-    { icon: <UsersIcon size={20} />, label: 'Total Attempts', value: stats?.totalSubmissions ?? 0, bg: '#EBF3FF', color: '#1E40AF' },
-    { icon: <TrendingUpIcon size={20} />, label: 'Avg Score', value: `${stats?.avgScore ?? 0}%`, bg: '#FEF3C7', color: '#92400E' },
+    { icon: <FileTextIcon size={22} />, label: 'Total Quizzes', value: stats?.totalQuizzes ?? 0, bg: 'rgba(99, 102, 241, 0.15)', color: 'var(--primary)' },
+    { icon: <SparklesIcon size={22} />, label: 'Active Now', value: activeQuizzes, bg: 'rgba(16, 185, 129, 0.15)', color: 'var(--success)' },
+    { icon: <UsersIcon size={22} />, label: 'Submissions', value: stats?.totalSubmissions ?? 0, bg: 'rgba(14, 165, 233, 0.15)', color: 'var(--accent)' },
+    { icon: <TrendingUpIcon size={22} />, label: 'Avg. Score', value: `${stats?.avgScore ?? 0}%`, bg: 'rgba(245, 158, 11, 0.15)', color: 'var(--warning)' },
   ];
 
   return (
@@ -41,29 +41,65 @@ const AdminDashboard = () => {
       <Navbar />
       <div className="page-wrapper">
         <div className="container">
-          {/* Welcome */}
-          <div style={{
-            background: 'linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%)',
-            borderRadius: 'var(--radius-xl)', padding: '32px 40px', marginBottom: 32, color: '#fff',
-            position: 'relative', overflow: 'hidden',
-          }}>
-            <div style={{ position: 'absolute', top: -20, right: -20, width: 180, height: 180, background: 'rgba(255,255,255,0.07)', borderRadius: '50%' }} />
-            <h1 className="inline-icon gap-icon" style={{ fontSize: '1.8rem', fontWeight: 800, marginBottom: 8 }}>
-              <CrownIcon size={28} />
-              <span>Admin Dashboard</span>
+          {/* Header */}
+          <div
+            style={{
+              background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(168, 85, 247, 0.08) 50%, rgba(14, 165, 233, 0.08) 100%)',
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--radius-xl)',
+              padding: '34px 40px',
+              marginBottom: 36,
+              color: 'var(--text-primary)',
+              position: 'relative',
+              overflow: 'hidden',
+              boxShadow: '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+            }}
+          >
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '5px 14px',
+                borderRadius: 'var(--radius-full)',
+                background: 'rgba(99, 102, 241, 0.12)',
+                border: '1px solid rgba(99, 102, 241, 0.3)',
+                color: 'var(--primary)',
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                marginBottom: 12,
+              }}
+            >
+              <CrownIcon size={14} />
+              Admin Portal • Overview
+            </div>
+            <h1
+              className="inline-icon gap-icon"
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: '2.1rem',
+                fontWeight: 800,
+                marginBottom: 8,
+                letterSpacing: '-0.02em',
+                color: 'var(--text-primary)',
+              }}
+            >
+              Admin Dashboard
             </h1>
-            <p style={{ opacity: 0.85 }}>Welcome back, {user?.name}! Manage your quizzes from here.</p>
-            <div style={{ marginTop: 20, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-              <Link to="/admin/create-quiz" className="btn inline-icon gap-icon" style={{ background: '#fff', color: 'var(--primary)', fontWeight: 700 }}>
-                <PlusIcon size={16} />
-                <span>Create Quiz</span>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.98rem', maxWidth: 600 }}>
+              Welcome back, {user?.name}. Manage quizzes, view submissions, and track student performance.
+            </p>
+            <div style={{ marginTop: 24, display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+              <Link to="/admin/create-quiz" className="btn btn-primary inline-icon gap-icon">
+                <PlusIcon size={18} />
+                <span>Create New Quiz</span>
               </Link>
-              <Link to="/admin/quizzes" className="btn inline-icon gap-icon" style={{ background: 'rgba(255,255,255,0.2)', color: '#fff', border: '1px solid rgba(255,255,255,0.3)' }}>
-                <FileTextIcon size={16} />
-                <span>View All Quizzes</span>
+              <Link to="/admin/quizzes" className="btn btn-outline inline-icon gap-icon">
+                <FileTextIcon size={18} />
+                <span>All Quizzes</span>
               </Link>
-              <Link to="/admin/manage-users" className="btn inline-icon gap-icon" style={{ background: 'rgba(255,255,255,0.2)', color: '#fff', border: '1px solid rgba(255,255,255,0.3)' }}>
-                <UserIcon size={16} />
+              <Link to="/admin/manage-users" className="btn btn-outline inline-icon gap-icon">
+                <UserIcon size={18} />
                 <span>Manage Users</span>
               </Link>
             </div>

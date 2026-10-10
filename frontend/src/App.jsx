@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import CyberBackground from './components/CyberBackground';
 
 // Auth
 import Login from './pages/auth/Login';
@@ -27,19 +28,24 @@ function App() {
   return (
     <AuthProvider>
       <Router>
+        <CyberBackground />
         <Toaster
           position="top-right"
           toastOptions={{
             duration: 3500,
             style: {
-              fontFamily: 'Inter, sans-serif',
-              fontWeight: 500,
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              fontWeight: 600,
+              fontSize: '0.875rem',
               borderRadius: '12px',
-              border: '1px solid #E5E1FF',
-              boxShadow: '0 4px 16px rgba(108,99,255,0.15)',
+              background: 'var(--bg-card)',
+              color: 'var(--text-primary)',
+              backdropFilter: 'blur(16px)',
+              border: '1px solid var(--border)',
+              boxShadow: 'var(--shadow-lg)',
             },
-            success: { iconTheme: { primary: '#10B981', secondary: '#fff' } },
-            error: { iconTheme: { primary: '#EF4444', secondary: '#fff' } },
+            success: { iconTheme: { primary: '#10B981', secondary: 'var(--bg-card)' } },
+            error: { iconTheme: { primary: '#EF4444', secondary: '#FFFFFF' } },
           }}
         />
         <Routes>

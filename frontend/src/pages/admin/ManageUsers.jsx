@@ -9,15 +9,17 @@ const initialForm = { email: '', password: '', name: '', role: 'user' };
 
 const Toast = ({ msg, type, onClose }) => {
   if (!msg) return null;
-  const colors = { success: '#10B981', error: '#EF4444', info: '#6C63FF' };
+  const colors = { success: 'var(--neon-green)', error: 'var(--neon-red)', info: 'var(--neon-cyan)' };
+  const borderColors = { success: 'rgba(0, 245, 160, 0.5)', error: 'rgba(255, 42, 85, 0.5)', info: 'rgba(0, 242, 254, 0.5)' };
   return (
     <div style={{
-      padding: '12px 20px', borderRadius: 10, marginBottom: 16, fontWeight: 600,
-      background: `${colors[type]}18`, border: `1.5px solid ${colors[type]}`,
+      padding: '12px 20px', borderRadius: 'var(--radius-sm)', marginBottom: 16, fontWeight: 700,
+      background: 'rgba(10, 13, 28, 0.95)', border: `1.5px solid ${borderColors[type]}`,
       color: colors[type], display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.5)',
     }}>
-      <span>{msg}</span>
-      <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: colors[type] }}>×</button>
+      <span style={{ fontSize: '0.88rem' }}>{msg}</span>
+      <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 20, color: colors[type], lineHeight: 1 }}>×</button>
     </div>
   );
 };
@@ -139,18 +141,26 @@ const ManageUsers = () => {
 
           {/* Header */}
           <div style={{
-            background: 'linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%)',
-            borderRadius: 'var(--radius-xl)', padding: '28px 36px', marginBottom: 32, color: '#fff',
-            position: 'relative', overflow: 'hidden',
+            background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(168, 85, 247, 0.08) 50%, rgba(14, 165, 233, 0.08) 100%)',
+            border: '1px solid var(--border)',
+            borderRadius: 'var(--radius-xl)',
+            padding: '32px 40px',
+            marginBottom: 32,
+            color: 'var(--text-primary)',
+            position: 'relative',
+            overflow: 'hidden',
+            boxShadow: '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
           }}>
-            <div style={{ position: 'absolute', top: -20, right: -20, width: 160, height: 160, background: 'rgba(255,255,255,0.07)', borderRadius: '50%' }} />
-            <h1 className="page-title inline-icon gap-icon" style={{ color: '#fff' }}>
-              <UserIcon size={28} />
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '5px 14px', borderRadius: 'var(--radius-full)', background: 'rgba(99, 102, 241, 0.12)', border: '1px solid rgba(99, 102, 241, 0.3)', color: 'var(--primary)', fontSize: '0.8rem', fontWeight: 700, marginBottom: 12 }}>
+              <UserIcon size={13} />
+              <span>User Directory • Accounts</span>
+            </div>
+            <h1 className="page-title inline-icon gap-icon" style={{ fontSize: '2rem', fontWeight: 800, marginBottom: 8 }}>
               <span>Manage Users</span>
             </h1>
-            <p style={{ opacity: 0.85 }}>Create user accounts manually or import from a CSV / Excel file.</p>
-            <div style={{ marginTop: 16 }}>
-              <Link to="/admin" className="btn inline-icon gap-icon" style={{ background: 'rgba(255,255,255,0.2)', color: '#fff', border: '1px solid rgba(255,255,255,0.3)' }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.98rem' }}>Create individual student or admin accounts, or bulk import users via CSV.</p>
+            <div style={{ marginTop: 20 }}>
+              <Link to="/admin" className="btn btn-outline inline-icon gap-icon">
                 <ArrowLeftIcon size={16} />
                 <span>Back to Dashboard</span>
               </Link>
@@ -162,8 +172,8 @@ const ManageUsers = () => {
 
             {/* ── Manual Create ── */}
             <div className="card">
-              <h2 style={{ fontWeight: 700, fontSize: '1.05rem', marginBottom: 18, display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span className="inline-icon gap-icon" style={{ background: '#EDE9FF', color: 'var(--primary)', borderRadius: 8, padding: '4px 10px', fontSize: '0.85rem' }}>
+              <h2 style={{ fontWeight: 800, fontSize: '1.15rem', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 10, color: 'var(--text-primary)' }}>
+                <span className="badge badge-primary inline-icon gap-icon">
                   <EditIcon size={12} />
                   <span>Manual</span>
                 </span>
@@ -174,36 +184,36 @@ const ManageUsers = () => {
                 <Toast msg={createMsg.text} type={createMsg.type} onClose={() => setCreateMsg(null)} />
               )}
 
-              <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 <div className="form-group">
-                  <label className="form-label">Email *</label>
+                  <label className="label">Email *</label>
                   <input
-                    type="email" className="form-input" placeholder="user@example.com" required
+                    type="email" className="input" placeholder="user@example.com" required
                     value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
                   />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Password *</label>
+                  <label className="label">Password *</label>
                   <input
-                    type="password" className="form-input" placeholder="Min. 6 characters" required minLength={6}
+                    type="password" className="input" placeholder="Min. 6 characters" required minLength={6}
                     value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })}
                   />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Name <span style={{ opacity: 0.5 }}>(optional)</span></label>
+                  <label className="label">Name <span style={{ opacity: 0.5 }}>(optional)</span></label>
                   <input
-                    type="text" className="form-input" placeholder="Auto-derived from email"
+                    type="text" className="input" placeholder="Auto-derived from email"
                     value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
                   />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Role</label>
-                  <select className="form-input" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
+                  <label className="label">Role</label>
+                  <select className="select" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
                     <option value="user">User</option>
                     <option value="admin">Admin</option>
                   </select>
                 </div>
-                <button className="btn btn-primary inline-icon gap-icon" type="submit" disabled={createLoading} style={{ marginTop: 4 }}>
+                <button className="btn btn-primary inline-icon gap-icon" type="submit" disabled={createLoading} style={{ marginTop: 6 }}>
                   <PlusIcon size={16} />
                   <span>{createLoading ? 'Creating...' : 'Create User'}</span>
                 </button>
@@ -212,8 +222,8 @@ const ManageUsers = () => {
 
             {/* ── Bulk Upload ── */}
             <div className="card">
-              <h2 style={{ fontWeight: 700, fontSize: '1.05rem', marginBottom: 18, display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span className="inline-icon gap-icon" style={{ background: '#D1FAE5', color: '#065F46', borderRadius: 8, padding: '4px 10px', fontSize: '0.85rem' }}>
+              <h2 style={{ fontWeight: 800, fontSize: '1.15rem', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 10, color: 'var(--text-primary)' }}>
+                <span className="badge badge-success inline-icon gap-icon">
                   <UploadCloudIcon size={12} />
                   <span>Bulk</span>
                 </span>
@@ -226,25 +236,27 @@ const ManageUsers = () => {
 
               {/* Upload zone */}
               <div
+                className="file-drop-zone"
                 onClick={() => fileInputRef.current?.click()}
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={(e) => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) { setFile(f); setUploadResult(null); setUploadMsg(null); } }}
                 style={{
-                  border: `2px dashed ${file ? 'var(--primary)' : '#C4B5FD'}`,
-                  borderRadius: 12, padding: '28px 16px', textAlign: 'center', cursor: 'pointer',
-                  background: file ? '#EDE9FF40' : '#FAFAFA', transition: 'all 0.2s', marginBottom: 14,
+                  padding: '32px 20px',
+                  marginBottom: 16,
+                  borderColor: file ? 'var(--neon-green)' : 'var(--border)',
+                  background: file ? 'rgba(0, 245, 160, 0.08)' : 'var(--bg-input)',
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
-                  {file ? <FileTextIcon size={36} style={{ color: 'var(--primary)' }} /> : <UploadCloudIcon size={36} style={{ color: 'var(--text-muted)' }} />}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
+                  {file ? <FileTextIcon size={40} style={{ color: 'var(--neon-green)' }} /> : <UploadCloudIcon size={40} style={{ color: 'var(--neon-cyan)' }} />}
                 </div>
                 {file ? (
-                  <p style={{ fontWeight: 600, color: 'var(--primary)', fontSize: '0.9rem' }}>{file.name}</p>
+                  <p style={{ fontWeight: 700, color: 'var(--neon-green)', fontSize: '0.95rem' }}>{file.name}</p>
                 ) : (
                   <>
-                    <p style={{ fontWeight: 600, marginBottom: 4 }}>Drop a file here or click to browse</p>
-                    <p style={{ fontSize: '0.8rem', opacity: 0.6 }}>Supports .csv and .xlsx — max 5 MB</p>
-                    <p style={{ fontSize: '0.75rem', opacity: 0.5, marginTop: 6 }}>Columns: <strong>email</strong>, <strong>password</strong>, name (optional), role (optional)</p>
+                    <p style={{ fontWeight: 700, color: '#FFFFFF', marginBottom: 6, fontSize: '0.95rem' }}>Drop CSV/Excel file or click to browse</p>
+                    <p style={{ fontSize: '0.82rem', color: 'var(--neon-cyan)', fontFamily: 'var(--font-mono)' }}>Supports .csv and .xlsx — max 5 MB</p>
+                    <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: 8 }}>Columns: <strong style={{ color: '#fff' }}>email</strong>, <strong style={{ color: '#fff' }}>password</strong>, name, role</p>
                   </>
                 )}
                 <input type="file" ref={fileInputRef} accept=".csv,.xlsx,.xls" onChange={handleFileChange} style={{ display: 'none' }} />
@@ -265,8 +277,8 @@ const ManageUsers = () => {
 
               {/* Upload Result Summary */}
               {uploadResult && (
-                <div style={{ marginTop: 16, border: '1px solid #E5E1FF', borderRadius: 10, overflow: 'hidden' }}>
-                  <div className="inline-icon gap-icon" style={{ background: '#EDE9FF', padding: '10px 14px', fontWeight: 700, fontSize: '0.85rem', color: 'var(--primary)', width: '100%', boxSizing: 'border-box' }}>
+                <div style={{ marginTop: 16, border: '1px solid var(--border)', borderRadius: 10, overflow: 'hidden' }}>
+                  <div className="inline-icon gap-icon" style={{ background: 'var(--primary-light)', padding: '10px 14px', fontWeight: 700, fontSize: '0.85rem', color: 'var(--primary)', width: '100%', boxSizing: 'border-box' }}>
                     <TrendingUpIcon size={16} />
                     <span>Upload Summary — {uploadResult.totalRows} rows processed</span>
                   </div>
@@ -306,11 +318,11 @@ const ManageUsers = () => {
               </h2>
               <form onSubmit={handleSearch} style={{ display: 'flex', gap: 8 }}>
                 <input
-                  className="form-input" type="search" placeholder="Search email or name…"
+                  className="input" type="search" placeholder="Search email or name…"
                   value={search} onChange={(e) => setSearch(e.target.value)}
-                  style={{ padding: '6px 12px', fontSize: '0.85rem', minWidth: 200 }}
+                  style={{ padding: '8px 14px', fontSize: '0.88rem', minWidth: 220 }}
                 />
-                <button className="btn btn-secondary btn-sm" type="submit">Search</button>
+                <button className="btn btn-primary btn-sm" type="submit">Search</button>
               </form>
             </div>
 
